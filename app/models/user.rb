@@ -8,6 +8,6 @@ class User
   include Mongoid::Timestamps
 
   field :name, type: String
-  field :inventory, type: Hash
+  embeds_one :inventory
   field :location_id, type: BSON::ObjectId
 end
