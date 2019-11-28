@@ -4,4 +4,6 @@ Rails.application.routes.draw do
   post 'users/new', action: :new, controller: 'users'
   # TODO use id
   get 'users/:name', action: :show, controller: 'users'
+
+  root to: 'home#index'
 end
