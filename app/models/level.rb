@@ -7,6 +7,8 @@ class Level
     field :height, type: Integer
     
     embeds_many :chests
+    embeds_many :walls
+    embeds_many :monsters
 
     def show
         check = []
@@ -14,6 +16,16 @@ class Level
 
         chests.all.each do |c|
             r << {id: c.id.to_s, x: c.x, y: c.y, name: 'chest'}
+            check << c.x + c.y * width
+        end
+
+        monsters.all.each do |c|
+            r << {id: c.id.to_s, x: c.x, y: c.y, name: 'monster'}
+            check << c.x + c.y * width
+        end
+
+        walls.all.each do |c|
+            r << {x: c.x, y: c.y, name: 'wall'}
             check << c.x + c.y * width
         end
 
