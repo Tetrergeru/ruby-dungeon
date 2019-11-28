@@ -24,6 +24,6 @@ class Level
                 end
             end
         end
-        r
+        {width: width, height: height, items: r}
     end
 end
