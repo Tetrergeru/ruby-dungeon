@@ -7,8 +7,8 @@ class Level
     field :height, type: Integer
     
     embeds_many :chests
-    embeds_many :walls
     embeds_many :monsters
+    embeds_many :walls
 
     def show
         check = []
@@ -37,5 +37,23 @@ class Level
             end
         end
         {width: width, height: height, items: r}
+    end
+
+    def self.random_generate
+        l = create(width: rand(10) + 5, height: rand(10) + 5)
+        
+        for i in 0..(l.width - 1)
+            for j in 0..(l.height - 1)
+                case rand(10)
+                when 0
+                    l.chests << Chest.new(x: i, y: j)
+                when 1
+                    l.monsters << Monster.new(x: i, y: j)
+                when 2
+                    l.walls << Wall.new(x: i, y: j)
+                end
+            end
+        end
+        l.id.to_s
     end
 end

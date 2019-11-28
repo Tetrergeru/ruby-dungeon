@@ -9,4 +9,5 @@ Rails.application.routes.draw do
 
   # TODO determine the level of the user
   get 'levels/show/:id', action: :show, controller: 'levels' 
+  put 'levels/create', action: :create, controller: 'levels' 
 end

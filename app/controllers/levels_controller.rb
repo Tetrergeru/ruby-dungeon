@@ -5,6 +5,7 @@ class LevelsController < ActionController::Base
       render json: Level.find(params[:id]).show
     end
     
-    def index
+    def create
+      render json: Level.random_generate
     end
   end
