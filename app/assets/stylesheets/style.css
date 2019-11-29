@@ -1,0 +1,38 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --background: rgba(120, 220, 120, 0.45);
+}
+
+.container {
+    /* position: relative; */
+    /* width: 50%; */
+    /* height: 50%; */
+    /* padding: 16px; */
+    background-color: blue;
+}
+
+canvas {
+    width: 100%;
+    /*max-width: 512px;*/
+    /* height: 100%; */
+    display: block;
+    position: absolute;
+    image-rendering: optimizeSpeed;
+}
+
+body {
+    height: 100vh;
+    border: 0;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.disable {
+    display: none;
+}
