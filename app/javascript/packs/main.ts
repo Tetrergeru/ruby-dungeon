@@ -1,8 +1,8 @@
-import {Drawer, getResources} from "packs/graphics";
+import {Drawer, getDrawer} from "packs/graphics";
 import {Level, getLevel} from "packs/models";
 
 Promise.all<Drawer, Level>([
-    getResources(),
+    getDrawer(),
     getLevel(window.location.pathname.substr(1))]
     )
     .then(objects => {
