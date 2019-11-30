@@ -21,7 +21,8 @@ canvas {
     /* height: 100%; */
     display: block;
     position: absolute;
-    image-rendering: optimizeSpeed;
+    image-rendering: pixelated; /* chrome */
+    image-rendering: crisp-edges; /* firefox */
 }
 
 body {
