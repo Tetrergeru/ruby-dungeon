@@ -41,10 +41,16 @@ class Level
     l.id.to_s
   end
 
+  def show_item(item_id)
+    i = chests.select { |c| c.id.to_s == item_id }
+    return 'not correct id' if i.empty?
+    i[0].show
+  end
+
   def generate_random_item(x, y)
     case rand(10)
     when 0
-      chests << Chest.new(x: x, y: y)
+      chests << Chest.random_generate(x, y)
     when 1
       monsters << Monster.new(x: x, y: y)
     when 2
