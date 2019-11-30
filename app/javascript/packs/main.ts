@@ -37,9 +37,5 @@ console.log("Start!");
 
     };
     start()
-    let drawing = () => {
-        requestAnimationFrame(drawing);
-    }
-    requestAnimationFrame(drawing);
 }
 

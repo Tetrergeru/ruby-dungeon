@@ -27,27 +27,28 @@ export class Drawer {
         private field: CheckeredField,
         private resources: Map<string, ImageBitmap>) {
     }
+
     drawLevel(lvl: Level) {
         const cell = this.Must(lvl.floorType);
         this.field.resize(lvl, cell);
         this.field.fillBackground(cell);
-        // for(let i = 0; i<lvl.width; i++) {
-        //     for(let j = 0; j<lvl.height; j++) {
-        //         main.strokeRect(i*cell.width, j*cell.height, cell.width, cell.height)
-        //     }
-        // }
         console.log(lvl);
-        lvl.entity.forEach(entity => {
-            const sprite = this.Must(entity.type);
+        let drawing = () => {
+            this.field.clear(Layer.Main);
+            lvl.entity.forEach(entity => {
+                const sprite = this.Must(entity.type);
+                this.field.drawSpriteIn(
+                    Layer.Main, entity, sprite,
+                    (ctx) => ctx.drawImage(sprite, 0, 0));
+            });
             this.field.drawSpriteIn(
-                Layer.Main, entity, sprite,
-                (ctx) => ctx.drawImage(sprite, 0, 0));
-        });
-        for (let i=0; i<3; ++i)
-        this.field.drawSpriteIn(
-            Layer.Main, {x:i, y:i}, this.field.sizes.cell,
-            drawCell(this.field.sizes.cell))
+                Layer.Main, this.field.activeCell, this.field.sizes.cell,
+                drawCell(this.field.sizes.cell));
+            requestAnimationFrame(drawing);
+        };
+        requestAnimationFrame(drawing);
     }
+
     private Must(resource: string) {
         const floor = this.resources.get(resource);
         if (!floor)

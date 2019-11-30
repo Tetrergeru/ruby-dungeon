@@ -12,6 +12,11 @@ export class CheckeredField {
         inPX: Sizeable
         inCells: Sizeable
     };
+    private _currentCell = {x:0, y:0};
+    get activeCell(): Coordinately {
+        console.log(this._currentCell);
+        return this._currentCell;
+    }
 
     getContext(layer: Layer): CanvasRenderingContext2D {
         let context = this.contexts.get(layer);
@@ -27,9 +32,19 @@ export class CheckeredField {
     ) {
         this.canvases.set(Layer.Main, mainCanvas);
         this.canvases.set(Layer.Background, backgroundCanvas);
+        mainCanvas.addEventListener('mousemove', (event) => {
+            this._currentCell = this.getCurrentCell(event, mainCanvas);
+        });
         this.canvases.forEach(
             (canvas, layer) =>
                 this.contexts.set(layer, CanvasHelper.getContext(canvas)));
+    }
+
+    private getCurrentCell(event: MouseEvent, canvas: HTMLElement) {
+        return {
+            x: (this.sizes.inPX.width * event.offsetX / canvas.clientWidth) / this.sizes.cell.width | 0,
+            y: (this.sizes.inPX.height * event.offsetY / canvas.clientHeight) / this.sizes.cell.height | 0
+        };
     }
 
     static Make(root: HTMLElement) {
@@ -71,6 +86,10 @@ export class CheckeredField {
         background.rect(0, 0, this.sizes.inPX.width, this.sizes.inPX.height);
         background.fillStyle = pattern;
         background.fill();
+    }
+
+    clear(layer: Layer) {
+        this.getContext(layer).clearRect(0, 0, this.sizes.inPX.width, this.sizes.inPX.height);
     }
 }
 
