@@ -6,7 +6,12 @@
   <body>
     <tr>
     <%Level.all.each do |x|%>
-            <p>level: <a href=<%='/' + x.id%>><%=x.id%></a></p>
+      <p>level: <a href=<%='/' + x.id%>><%=x.id%></a></p>
+      <ul>
+        <%x.chests.each do |chst|%>
+          <li>chest: <a href=<%='/' + x.id + '/' + chst.id%>><%= chst.id%></a></li>
+        <%end%>
+      </ul>
     <%end%>
     <tr>
   </body>
