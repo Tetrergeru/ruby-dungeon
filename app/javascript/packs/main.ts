@@ -1,4 +1,4 @@
-import {Drawer, getDrawer} from "packs/graphics";
+import {Drawer, getDrawer} from "packs/graphics/drawer";
 import {Level, getLevel} from "packs/models";
 
 Promise.all<Drawer, Level>([
