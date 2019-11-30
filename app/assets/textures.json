@@ -1,0 +1,33 @@
+{
+  "chest": {
+    "file": "chest.png"
+  },
+
+  "chest_bottom": {
+    "file": "chest_bottom.png"
+  },
+
+  "floor": {
+    "file": "floor.png"
+  },
+
+  "monster": {
+    "file": "monster2.png"
+  },
+
+  "revolver": {
+    "file": "revolver.png"
+  },
+
+  "ruby": {
+    "file": "ruby.png"
+  },
+
+  "sword": {
+    "file": "sword.png"
+  },
+
+  "wall": {
+    "file": "wall.png"
+  }
+}
