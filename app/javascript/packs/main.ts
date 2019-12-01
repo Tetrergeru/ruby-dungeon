@@ -1,13 +1,23 @@
-import {Drawer, getDrawer} from "packs/graphics/drawer";
-import {Level, getLevel} from "packs/models";
+import {Drawer, getDrawers} from "packs/graphics/drawer";
+import {Level, getLevel, Entity} from "packs/models";
 
-Promise.all<Drawer, Level>([
-    getDrawer(),
+Promise.all<Drawer[], Level>([
+    getDrawers('level-field', 'chest-field'),
     getLevel(window.location.pathname.substr(1))]
     )
     .then(objects => {
         console.log("All were downloaded!");
-        objects[0].drawLevel(objects[1]);
+        let levelField = objects[0][0];
+        let chestField = objects[0][1];
+        levelField.addEventListener('select', (entity: Entity) => {
+            console.log(entity);
+            switch (entity.type) {
+                case 'chest':
+                    getLevel(`${window.location.pathname.substr(1)}/${entity.id}`)
+                        .then(chest => chestField.setLevel(chest));
+            }
+        });
+        levelField.setLevel(objects[1]);
     })
     .catch(reason => {
         const err = `Draw level: ${reason}`;

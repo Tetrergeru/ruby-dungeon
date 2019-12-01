@@ -7,20 +7,26 @@
     --background: rgba(120, 220, 120, 0.45);
 }
 
+.fields {
+    display: flex;
+}
+
 .container {
-    /* position: relative; */
+    flex: 1;
+    position: relative;
     /* width: 50%; */
-    /* height: 50%; */
-    /* padding: 16px; */
-    background-color: blue;
+    /* height: 50vh;*/
+    margin: 4px;
 }
 
 canvas {
     width: 100%;
     /*max-width: 512px;*/
-    /* height: 100%; */
+    /*height: 100%;*/
     display: block;
     position: absolute;
+    left: 0;
+    top: 0;
     image-rendering: pixelated; /* chrome */
     image-rendering: crisp-edges; /* firefox */
 }

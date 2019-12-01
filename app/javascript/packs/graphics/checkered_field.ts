@@ -4,9 +4,21 @@ export enum Layer {
     Background, Main
 }
 
+type ClickEventListener = (cell: Coordinately) => void;
+type FieldEvent = "click"
 export class CheckeredField {
     private canvases = new Map<Layer, HTMLCanvasElement>();
     private contexts = new Map<Layer, CanvasRenderingContext2D>();
+    private clickListeners = new Array<ClickEventListener>();
+    addEventListener(event: FieldEvent, callback: ClickEventListener) {
+        switch (event) {
+            case "click":
+                this.clickListeners.push(callback);
+                break;
+            default:
+                throw new RangeError(`${event} is not a FieldEvent`)
+        }
+    }
     public sizes: {
         cell: Sizeable
         inPX: Sizeable
@@ -14,7 +26,7 @@ export class CheckeredField {
     };
     private _currentCell = {x:0, y:0};
     get activeCell(): Coordinately {
-        console.log(this._currentCell);
+        // console.log(this._currentCell);
         return this._currentCell;
     }
 
@@ -34,6 +46,10 @@ export class CheckeredField {
         this.canvases.set(Layer.Background, backgroundCanvas);
         mainCanvas.addEventListener('mousemove', (event) => {
             this._currentCell = this.getCurrentCell(event, mainCanvas);
+        });
+        mainCanvas.addEventListener('click', (event) => {
+            this._currentCell = this.getCurrentCell(event, mainCanvas);
+            this.clickListeners.forEach(value => value(this._currentCell));
         });
         this.canvases.forEach(
             (canvas, layer) =>
