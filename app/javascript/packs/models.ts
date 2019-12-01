@@ -14,19 +14,20 @@ export class Entity {
     }
 }
 
-export class Level {
+export class Drawable {
     constructor(
         public readonly width: number,
         public readonly height: number,
         public readonly floorType: string,
         public readonly entity: Array<Entity>) {
+        entity.sort((a, b) => a.y - b.y)
     }
 }
 
-function parseLevel(raw: any) {
-    return new Level(raw.width, raw.height, raw.floor, raw.items.map(x => new Entity(x)))
+function parseDrawable(raw: any) {
+    return new Drawable(raw.width, raw.height, raw.floor, raw.items.map(x => new Entity(x)))
 }
 
-export function getLevel(id: string): Promise<Level> {
-    return fetchJSON(`/levels/show/${id}`).then(json => parseLevel(json));
+export function getDrawableField(id: string): Promise<Drawable> {
+    return fetchJSON(`/levels/show/${id}`).then(json => parseDrawable(json));
 }

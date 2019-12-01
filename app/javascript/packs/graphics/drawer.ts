@@ -1,7 +1,7 @@
-import {Entity, Level} from "packs/models";
+import {Entity, Drawable} from "packs/models";
 import {downloadImages} from "packs/resources";
 import {CheckeredField, Layer} from "packs/graphics/checkered_field";
-import {Sizeable} from "packs/graphics/models";
+import {Coordinately, Sizeable} from "packs/graphics/models";
 
 export function getDrawers(...ids: string[]) {
     return downloadImages()
@@ -32,38 +32,48 @@ export class Drawer {
         private field: CheckeredField,
         private resources: Map<string, ImageBitmap>) {
         let drawing = () => {
-            if(this.lvl) {
+            if(this.drawable) {
                 this.field.clear(Layer.Main);
-                this.lvl.entity.forEach(entity => {
-                    const sprite = this.Must(entity.type);
-                    this.field.drawSpriteIn(
-                        Layer.Main, entity, sprite,
-                        (ctx) => ctx.drawImage(sprite, 0, 0));
+                this.drawable.entity.forEach(entity => {
+                    this.drawEntity(entity);
                 });
                 this.field.drawSpriteIn(
                     Layer.Main, this.field.activeCell, this.field.sizes.cell,
                     drawCell(this.field.sizes.cell));
+                let active = this.getEntity(this.field.activeCell);
+                if(active) this.drawEntity(active);
             }
             requestAnimationFrame(drawing);
         };
         requestAnimationFrame(drawing);
     }
 
-    private lvl: Level;
-    setLevel(lvl: Level) {
-        this.lvl = lvl;
-        const cell = this.Must(this.lvl.floorType);
-        this.field.resize(this.lvl, cell);
+    private drawEntity(entity: Entity) {
+        const sprite = this.Must(entity.type);
+        this.field.drawSpriteIn(
+            Layer.Main, entity, sprite,
+            (ctx) => ctx.drawImage(sprite, 0, 0));
+    }
+
+    private drawable: Drawable;
+    setLevel(lvl: Drawable) {
+        this.drawable = lvl;
+        const cell = this.Must(this.drawable.floorType);
+        this.field.resize(this.drawable, cell);
         this.field.fillBackground(cell);
-        console.log(this.lvl);
+        console.log(this.drawable);
     }
 
     addEventListener(type: string, callback: ClickableEventListener) {
         this.field.addEventListener('click', cell => {
-            let entity = this.lvl.entity.find(entity => entity.x == cell.x && entity.y == cell.y);
+            let entity = this.getEntity(cell);
             if(entity)
                 callback(entity);
         })
+    }
+
+    private getEntity(cell: Coordinately) {
+        return this.drawable.entity.find(entity => entity.x == cell.x && entity.y == cell.y);
     }
 
     private Must(resource: string) {
