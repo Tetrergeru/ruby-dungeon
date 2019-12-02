@@ -29,5 +29,5 @@ function parseDrawable(raw: any) {
 }
 
 export function getDrawableField(id: string): Promise<Drawable> {
-    return fetchJSON(`/levels/show/${id}`).then(json => parseDrawable(json));
+    return fetchJSON(`/game/${id}`).then(json => parseDrawable(json));
 }
