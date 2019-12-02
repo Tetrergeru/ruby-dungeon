@@ -33,5 +33,13 @@
 
   "back": {
     "file": "back.png"
+  },
+
+  "chest_separator": {
+    "file": "chest_separator.png"
+  },
+
+  "chest_up_separator":{
+    "file": "chest_up_separator.png"
   }
 }

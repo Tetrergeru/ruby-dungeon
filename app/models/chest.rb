@@ -11,16 +11,57 @@ class Chest
   embeds_one :inventory
   embedded_in :level
 
-  def show
+  def show(user)
+    c_items = inventory.items
+    u_items = user.inventory.items
+
     w = 4
-    h = (inventory.items.count + w - 1) / w + 1
+    h = ([c_items.count, u_items.count].max + w - 1) / w + 1
     r = [{x: 0, y: 0, name: :back, id: "back"}]
-    
-    (0..(inventory.items.count - 1)).each do |i|
-        r << {x: i % w, y: i / w + 1, name: inventory.items[i].name, id: inventory.items[i].to_s}
+
+    (0..(c_items.count - 1)).each do |i|
+      r << {x: i % w + w + 1, y: i / w + 1, name: c_items[i].name, id: c_items[i].id.to_s}
     end
 
-    { width: w, height: h, floor: :chest_bottom, items: r }
+    (0..(u_items.count - 1)).each do |i|
+        r << {x: i % w, y: i / w + 1, name: u_items[i].name, id: u_items[i].id.to_s}
+    end
+
+    (1..(h - 1)).each do |i|
+      r << {x: w, y: i, name: 'chest_separator'}
+    end
+
+    (w..(2 * w)).each do |i|
+      r << {x: i, y: 0, name: 'chest_up_separator'}
+    end
+
+    { width: w * 2 + 1, height: h, floor: :chest_bottom, items: r }
+  end
+
+  def action(user, action_id)
+    if(action_id == 'back')
+      user.chest = nil
+      return
+    end
+
+    c_items = inventory.items
+    u_items = user.inventory.items
+
+    if c_items.any?{ |i| i.id.to_s == action_id }
+      item = c_items.find(action_id)
+      u_items << item.clone
+      c_items.delete(item)
+      
+      return
+    end
+
+    if u_items.any?{ |i| i.id.to_s == action_id }
+      item = u_items.find(action_id)
+      c_items << item.clone
+      u_items.delete(item)
+      return
+    end
+
   end
 
   def self.random_generate(x, y)

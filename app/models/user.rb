@@ -45,12 +45,9 @@ class User
 
     # FIXME
     # FIXME !
-    # FIXME !!!
     u = User.find(id)
     if u.chest.present?
-      if action_id == "back"
-        chest = u.chest = nil
-      end
+      Level.find(u.location).chests.find(u.chest).action(u, action_id)
     else
       c = Level.find(u.location.to_s).chests.find(action_id)
       if c.present?
@@ -70,7 +67,7 @@ class User
     end
     
     if u.chest
-      Level.find(u.location).chests.find(u.chest).show
+      Level.find(u.location).chests.find(u.chest).show(u)
     else
       Level.find(u.location).show
     end
