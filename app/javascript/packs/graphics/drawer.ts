@@ -21,7 +21,7 @@ export function getDrawers(...ids: string[]) {
 
 function drawCell(cell: Sizeable) {
     return (ctx: CanvasRenderingContext2D) => {
-        ctx.strokeRect(0, 0, cell.width, cell.height)
+        ctx.strokeRect(0, 0, cell.width-1, cell.height-1)
     };
 }
 

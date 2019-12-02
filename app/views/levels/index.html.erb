@@ -5,7 +5,7 @@
 
   <body>
     <tr>
-    <% current_user ||= User.find(session[:user_id]) if session[:user_id]%>
+    <% current_user = @current_user %>
     
     <div class="container-fluid">
       <div class="collapse navbar-collapse" id="navbar-collapse">
@@ -14,7 +14,7 @@
             <img src=<%= current_user.profile_image %>>
             <li><%= link_to 'Home', root_path %></li>
             <li>Signed in as <%= current_user.name %></li>
-            <li><a href = '/logout'>Log Out</li>
+            <li><a href = '/auth/logout'>Log Out</a></li>
           <% else %>
             <li><%= link_to 'Home', root_path %></li>
             <li><%= link_to "Sign in with Github", "/auth/github" %></li>
@@ -25,11 +25,6 @@
 
     <%Level.all.each do |x|%>
       <p>level: <a href=<%='/' + x.id%>><%=x.id%></a></p>
-      <ul>
-        <%x.chests.each do |chst|%>
-          <li>chest: <a href=<%='/' + x.id + '/' + chst.id%>><%= chst.id%></a></li>
-        <%end%>
-      </ul>
     <%end%>
     <tr>
   </body>

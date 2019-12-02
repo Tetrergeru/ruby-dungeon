@@ -1,4 +1,4 @@
-class LevelsController < ActionController::Base
+class LevelsController < ApplicationController
   # FIXME
   skip_before_action :verify_authenticity_token
   def show
