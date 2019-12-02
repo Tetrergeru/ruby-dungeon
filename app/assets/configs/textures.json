@@ -29,5 +29,9 @@
 
   "wall": {
     "file": "wall.png"
+  },
+
+  "back": {
+    "file": "back.png"
   }
 }

@@ -13,11 +13,11 @@ class Chest
 
   def show
     w = 4
-    h = (inventory.items.count + w - 1) / w
-    r = []
+    h = (inventory.items.count + w - 1) / w + 1
+    r = [{x: 0, y: 0, name: :back, id: "back"}]
     
     (0..(inventory.items.count - 1)).each do |i|
-        r << {x: i % w, y: i / w, name: inventory.items[i].name}
+        r << {x: i % w, y: i / w + 1, name: inventory.items[i].name, id: inventory.items[i].to_s}
     end
 
     { width: w, height: h, floor: :chest_bottom, items: r }

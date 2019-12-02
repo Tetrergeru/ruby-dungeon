@@ -9,7 +9,8 @@ class User
 
   field :name, type: String
   embeds_one :inventory
-  field :location_id, type: BSON::ObjectId
+  field :location, type: BSON::ObjectId
+  field :chest, type: BSON::ObjectId
 
   field :provider, type: String 
   field :uid, type: String 
@@ -26,7 +27,52 @@ class User
       token: auth_hash.credentials.token,
       secret: auth_hash.credentials.secret
     )
+    if !user.inventory
+      user.inventory = Inventory.new(items: [])
+    end
     user
   end
 
+  def action(action_id)
+    
+    # FIXME
+    if !location
+      # FIXME
+      u = User.find(id)
+      u.location = location = Level.all[0].id
+      u.save
+    end
+
+    # FIXME
+    # FIXME !
+    # FIXME !!!
+    u = User.find(id)
+    if u.chest.present?
+      if action_id == "back"
+        chest = u.chest = nil
+      end
+    else
+      c = Level.find(u.location.to_s).chests.find(action_id)
+      if c.present?
+        chest = u.chest = c.id
+      end
+    end
+    u.save
+  end
+
+
+  def show
+    # FIXME
+    u = User.find(id)
+    if !location
+      u.location = location = Level.all[0].id
+      u.save
+    end
+    
+    if u.chest
+      Level.find(u.location).chests.find(u.chest).show
+    else
+      Level.find(u.location).show
+    end
+  end
 end
