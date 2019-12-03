@@ -11,35 +11,51 @@ class Level
   embeds_many :chests
   embeds_many :monsters
   embeds_many :walls
+  embeds_many :doors
 
   def show(user)
-    if user.chest.present?
-      return chests.find(user.chest).show(user)
-    end
+    return chests.find(user.chest).show(user) if user.chest.present?
+
     to_json
   end
 
-  def self.random_generate
-    l = create(width: rand(5..14), height: rand(5..14))
+  def self.random_generate(owner = nil)
+    l = Level.create(width: rand(5..14), height: rand(5..14))
 
     (0..(l.width - 1)).each do |i|
       (0..(l.height - 1)).each do |j|
         l.generate_random_item(i, j)
       end
     end
-    l.id.to_s
+
+    if l.doors.count < 2
+      l.delete
+      return random_generate(owner)
+    end
+
+    if owner
+      d = l.doors[rand(l.doors.count)]
+      d.target_level = owner.id
+      d.save
+    end
+    l
   end
 
   def action(user, action_id)
     if user.chest.present?
-      return chests.find(user.chest).action(user, action_id)
+      chests.find(user.chest).action(user, action_id)
+    elsif chests.any? { |i| i.id.to_s == action_id }
+      user.chest = chests.find(action_id).id
+    elsif doors.any? { |i| i.id.to_s == action_id }
+      doors.find(action_id).action(user, action_id)
     end
-    user.chest = chests.find(action_id).id
+    save
   end
 
   def show_item(item_id)
     i = chests.select { |c| c.id.to_s == item_id }
     return 'not correct id' if i.empty?
+
     i[0].show
   end
 
@@ -51,12 +67,14 @@ class Level
       monsters << Monster.new(x: x, y: y)
     when 2
       walls << Wall.new(x: x, y: y)
+    when 3
+      doors << Door.new(x: x, y: y)
     end
   end
 
   private
 
-  def to_json
+  def to_json(*_args)
     r = []
 
     chests.all.each do |c|
@@ -69,6 +87,10 @@ class Level
 
     walls.all.each do |c|
       r << { x: c.x, y: c.y, name: :wall }
+    end
+
+    doors.all.each do |c|
+      r << { id: c.id.to_s, x: c.x, y: c.y, name: :door }
     end
 
     { width: width, height: height, floor: :floor, wall: :wall, items: r }

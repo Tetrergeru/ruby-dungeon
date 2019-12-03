@@ -12,11 +12,11 @@ class User
   field :location, type: BSON::ObjectId
   field :chest, type: BSON::ObjectId
 
-  field :provider, type: String 
-  field :uid, type: String 
-  field :name, type: String 
-  field :token, type: String 
-  field :secret, type: String 
+  field :provider, type: String
+  field :uid, type: String
+  field :name, type: String
+  field :token, type: String
+  field :secret, type: String
   field :profile_image, type: String
 
   def self.find_or_create_from_auth_hash(auth_hash)
@@ -27,14 +27,9 @@ class User
       token: auth_hash.credentials.token,
       secret: auth_hash.credentials.secret
     )
-    if !user.inventory
-      user.inventory = Inventory.new(items: [])
-    end
-
-    if !user.location
-      user.location = location = Level.all[0].id
-    end
-
+    user.inventory = Inventory.new(items: []) unless user.inventory
+    user.location = Level.all[0].id unless user.location
+    user.save
     user
   end
 

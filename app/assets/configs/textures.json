@@ -31,6 +31,10 @@
     "file": "wall.png"
   },
 
+  "door": {
+    "file": "door.png"
+  },
+
   "back": {
     "file": "back.png"
   },
