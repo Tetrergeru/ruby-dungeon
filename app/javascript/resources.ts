@@ -1,4 +1,4 @@
-import {fetchJSON} from "packs/http_helpers";
+import {fetchJSON} from "http_helpers";
 
 interface Texture {
     readonly file: string

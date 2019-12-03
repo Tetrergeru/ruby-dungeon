@@ -1,5 +1,5 @@
-import {Drawer, getDrawers} from "packs/graphics/drawer";
-import {Drawable, getDrawableField, Entity} from "packs/models";
+import {Drawer, getDrawers} from "graphics/drawer";
+import {Drawable, getDrawableField, Entity} from "models";
 
 Promise.all<Drawer[], Drawable>([
     getDrawers('level-field'),

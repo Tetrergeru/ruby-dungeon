@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>RubyDungeon</title>
+  <%= stylesheet_link_tag 'style' %>
+  <%= stylesheet_link_tag 'style_canvas' %>
+</head>
+
+<body class="game">
+<header>
+  <article class="user">
+    <header>Signed in as</header>
+    <section>
+      <span><%= @current_user.name %> </span>
+      <img src=<%= @current_user.profile_image %>>
+    </section>
+    <section>
+      <a href='/auth/logout'>
+        <button>Log Out</button>
+      </a>
+    </section>
+    <section>
+      <a href='/'>
+        <button>Home</button>
+      </a>
+    </section>
+  </article>
+</header>
+<%= yield %>
+</body>
+<%= javascript_pack_tag 'game' %>
+</html>

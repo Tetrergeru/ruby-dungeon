@@ -1,4 +1,4 @@
-import {Coordinately, Sizeable} from "packs/graphics/models";
+import {Coordinately, Sizeable} from "graphics/models";
 
 export enum Layer {
     Background, Main

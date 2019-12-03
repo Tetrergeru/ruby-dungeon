@@ -1,7 +1,7 @@
-import {Entity, Drawable} from "packs/models";
-import {downloadImages} from "packs/resources";
-import {CheckeredField, Layer} from "packs/graphics/checkered_field";
-import {Coordinately, Sizeable} from "packs/graphics/models";
+import {Entity, Drawable} from "models";
+import {downloadImages} from "resources";
+import {CheckeredField, Layer} from "graphics/checkered_field";
+import {Coordinately, Sizeable} from "graphics/models";
 
 export function getDrawers(...ids: string[]) {
     return downloadImages()
@@ -41,7 +41,7 @@ export class Drawer {
                     Layer.Main, this.field.activeCell, this.field.sizes.cell,
                     drawCell(this.field.sizes.cell));
                 let active = this.getEntity(this.field.activeCell);
-                if(active) this.drawEntity(active);
+                if(active && active.id) this.drawEntity(active);
             }
             requestAnimationFrame(drawing);
         };
