@@ -30,46 +30,24 @@ class User
     if !user.inventory
       user.inventory = Inventory.new(items: [])
     end
+
+    if !user.location
+      user.location = location = Level.all[0].id
+    end
+
     user
   end
 
   def action(action_id)
-    
     # FIXME
-    if !location
-      # FIXME
-      u = User.find(id)
-      u.location = location = Level.all[0].id
-      u.save
-    end
-
-    # FIXME
-    # FIXME !
     u = User.find(id)
-    if u.chest.present?
-      Level.find(u.location).chests.find(u.chest).action(u, action_id)
-    else
-      c = Level.find(u.location.to_s).chests.find(action_id)
-      if c.present?
-        chest = u.chest = c.id
-      end
-    end
+    Level.find(u.location.to_s).action(u, action_id)
     u.save
   end
-
 
   def show
     # FIXME
     u = User.find(id)
-    if !location
-      u.location = location = Level.all[0].id
-      u.save
-    end
-    
-    if u.chest
-      Level.find(u.location).chests.find(u.chest).show(u)
-    else
-      Level.find(u.location).show
-    end
+    Level.find(u.location).show(u)
   end
 end

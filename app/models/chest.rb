@@ -35,7 +35,7 @@ class Chest
       r << {x: i, y: 0, name: 'chest_up_separator'}
     end
 
-    { width: w * 2 + 1, height: h, floor: :chest_bottom, items: r }
+    { width: w * 2 + 1, height: h, floor: :chest_bottom, wall: :wall, items: r }
   end
 
   def action(user, action_id)
@@ -51,7 +51,6 @@ class Chest
       item = c_items.find(action_id)
       u_items << item.clone
       c_items.delete(item)
-      
       return
     end
 
@@ -61,7 +60,6 @@ class Chest
       u_items.delete(item)
       return
     end
-
   end
 
   def self.random_generate(x, y)

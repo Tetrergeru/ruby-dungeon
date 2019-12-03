@@ -12,22 +12,11 @@ class Level
   embeds_many :monsters
   embeds_many :walls
 
-  def show
-    r = []
-
-    chests.all.each do |c|
-      r << { id: c.id.to_s, x: c.x, y: c.y, name: :chest }
+  def show(user)
+    if user.chest.present?
+      return chests.find(user.chest).show(user)
     end
-
-    monsters.all.each do |c|
-      r << { id: c.id.to_s, x: c.x, y: c.y, name: :monster }
-    end
-
-    walls.all.each do |c|
-      r << { x: c.x, y: c.y, name: :wall }
-    end
-
-    { width: width, height: height, floor: :floor, items: r }
+    to_json
   end
 
   def self.random_generate
@@ -39,6 +28,13 @@ class Level
       end
     end
     l.id.to_s
+  end
+
+  def action(user, action_id)
+    if user.chest.present?
+      return chests.find(user.chest).action(user, action_id)
+    end
+    user.chest = chests.find(action_id).id
   end
 
   def show_item(item_id)
@@ -56,5 +52,25 @@ class Level
     when 2
       walls << Wall.new(x: x, y: y)
     end
+  end
+
+  private
+
+  def to_json
+    r = []
+
+    chests.all.each do |c|
+      r << { id: c.id.to_s, x: c.x, y: c.y, name: :chest }
+    end
+
+    monsters.all.each do |c|
+      r << { id: c.id.to_s, x: c.x, y: c.y, name: :monster }
+    end
+
+    walls.all.each do |c|
+      r << { x: c.x, y: c.y, name: :wall }
+    end
+
+    { width: width, height: height, floor: :floor, wall: :wall, items: r }
   end
 end
