@@ -19,13 +19,14 @@ export class Drawable {
         public readonly width: number,
         public readonly height: number,
         public readonly floorType: string,
+        public readonly background: string,
         public readonly entity: Array<Entity>) {
         entity.sort((a, b) => a.y - b.y)
     }
 }
 
 function parseDrawable(raw: any) {
-    return new Drawable(raw.width, raw.height, raw.floor, raw.items.map(x => new Entity(x)))
+    return new Drawable(raw.width, raw.height, raw.floor, raw.wall, raw.items.map(x => new Entity(x)))
 }
 
 export function getDrawableField(id: string): Promise<Drawable> {

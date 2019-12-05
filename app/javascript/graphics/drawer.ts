@@ -20,8 +20,9 @@ export function getDrawers(...ids: string[]) {
 }
 
 function drawCell(cell: Sizeable) {
+    // cell = Sizeable.Sum(cell, Sizeable.Make(2, 2));
     return (ctx: CanvasRenderingContext2D) => {
-        ctx.strokeRect(0, 0, cell.width-1, cell.height-1)
+        ctx.strokeRect(0, 0, cell.width, cell.height)
     };
 }
 
@@ -37,11 +38,14 @@ export class Drawer {
                 this.drawable.entity.forEach(entity => {
                     this.drawEntity(entity);
                 });
-                this.field.drawSpriteIn(
-                    Layer.Main, this.field.activeCell, this.field.sizes.cell,
-                    drawCell(this.field.sizes.cell));
                 let active = this.getEntity(this.field.activeCell);
-                if(active && active.id) this.drawEntity(active);
+                if(active && active.id) {
+                    let sprite = this.Must(active.type);
+                    this.field.drawSpriteIn(
+                        Layer.Main, this.field.activeCell, sprite,
+                        drawCell(sprite));
+                    this.drawEntity(active);
+                }
             }
             requestAnimationFrame(drawing);
         };
