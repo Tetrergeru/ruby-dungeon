@@ -35,7 +35,7 @@ class Chest
       r << { x: i, y: 0, name: 'chest_up_separator' }
     end
 
-    { width: w * 2 + 1, height: h, floor: :chest_bottom, wall: :wall, items: r }
+    { width: w * 2 + 1, height: h, floor: :chest_bottom, wall: :chest_wall, items: r }
   end
 
   def action(user, action_id)

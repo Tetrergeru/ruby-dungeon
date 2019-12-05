@@ -3,10 +3,6 @@
     "file": "chest.png"
   },
 
-  "chest_bottom": {
-    "file": "chest_bottom.png"
-  },
-
   "floor": {
     "file": "floor.png"
   },
@@ -39,11 +35,19 @@
     "file": "back.png"
   },
 
+  "chest_bottom": {
+    "file": "chest_bottom.png"
+  },
+
   "chest_separator": {
     "file": "chest_separator.png"
   },
 
   "chest_up_separator":{
     "file": "chest_up_separator.png"
+  },
+
+  "chest_wall":{
+    "file": "chest_wall.png"
   }
 }
