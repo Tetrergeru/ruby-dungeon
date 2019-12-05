@@ -14,7 +14,7 @@ class Level
   embeds_many :doors
 
   def show(user)
-    return chests.find(user.chest).show(user) if user.chest.present?
+    return chests.find($redis_action.get(user.id)).show(user) if $redis_action.get(user.id)
 
     to_json
   end
@@ -42,10 +42,10 @@ class Level
   end
 
   def action(user, action_id)
-    if user.chest.present?
-      chests.find(user.chest).action(user, action_id)
+    if $redis_action.get(user.id)
+      chests.find($redis_action.get(user.id)).action(user, action_id)
     elsif chests.any? { |i| i.id.to_s == action_id }
-      user.chest = chests.find(action_id).id
+      $redis_action.set(user.id, action_id, ex: 600)
     elsif doors.any? { |i| i.id.to_s == action_id }
       doors.find(action_id).action(user, action_id)
     end

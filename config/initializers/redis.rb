@@ -1,0 +1,1 @@
+$redis_action = Redis.new

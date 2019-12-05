@@ -8,5 +8,6 @@ Doing some awesome game via ruby on rails
 - Bundler
 - Yarn 
 - [MongoDB 4.2](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/#install-mongodb-community-edition-using-deb-packages)
+- [Redis](https://redis.io/topics/quickstart) run with the command `redis-server`
 ### Useful
 - [Postman](https://www.getpostman.com/downloads/) - tool for testing API ([if you have trouble `Error: Cannot find module './services/electronProxy'`](https://github.com/postmanlabs/postman-app-support/issues/5093#issuecomment-450737208))

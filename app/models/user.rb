@@ -10,7 +10,6 @@ class User
   field :name, type: String
   embeds_one :inventory
   field :location, type: BSON::ObjectId
-  field :chest, type: BSON::ObjectId
 
   field :provider, type: String
   field :uid, type: String

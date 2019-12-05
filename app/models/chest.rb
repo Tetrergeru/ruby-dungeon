@@ -40,7 +40,7 @@ class Chest
 
   def action(user, action_id)
     if action_id == 'back'
-      user.chest = nil
+      $redis_action.del(user.id)
       return
     end
 
