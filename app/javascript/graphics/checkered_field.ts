@@ -11,14 +11,17 @@ class FieldSizes {
     readonly inPX: Sizeable;
     readonly scale: number;
     readonly offset: Sizeable;
+    readonly gameOffset: Sizeable;
+
     constructor(public readonly inRealPX: Sizeable,
                 public readonly inCells: Sizeable,
                 public readonly cell: Sizeable
     ) {
         this.inPX = Sizeable.Multiply(inCells, cell);
-        this.scale = Math.min(inRealPX.height / this.inPX.height, inRealPX.width / this.inPX.width)|0;
+        this.scale = Math.min(inRealPX.height / this.inPX.height, inRealPX.width / this.inPX.width) | 0;
         this.offset = Sizeable.Sum(inRealPX, Sizeable.Multiply(this.inPX, -this.scale));
-        this.offset = Sizeable.Round(Sizeable.Multiply(this.offset, 0.5))
+        this.offset = Sizeable.Round(Sizeable.Multiply(this.offset, 0.5));
+        this.gameOffset = Sizeable.Multiply(this.offset, 1 / this.scale);
     }
 }
 
@@ -76,8 +79,8 @@ export class CheckeredField {
         let real = Sizeable.Sum(
             Sizeable.Multiply(this.sizes.offset, -1),
             Sizeable.Make(
-                event.offsetX ,
-                event.offsetY ));
+                event.offsetX,
+                event.offsetY));
         return {
             x: (real.width / this.sizes.scale / this.sizes.cell.width) | 0,
             y: (real.height / this.sizes.scale / this.sizes.cell.height) | 0
@@ -124,15 +127,19 @@ export class CheckeredField {
     fillBackground(sprite: ImageBitmap) {
         let background = this.getContext(Layer.Background);
         let pattern = background.createPattern(sprite, 'repeat');
-        if (!pattern)
+        if (!pattern) {
             throw "Not pattern";
-        background.rect(0, 0, this.sizes.inPX.width, this.sizes.inPX.height);
+        }
         background.fillStyle = pattern;
-        background.fill();
+        background.fillRect(0, 0, this.sizes.inPX.width, this.sizes.inPX.height);
     }
 
     clear(layer: Layer) {
-        this.getContext(layer).clearRect(0, 0, this.sizes.inPX.width, this.sizes.inPX.height);
+        const offsetW = this.sizes.gameOffset.width;
+        const offsetH = this.sizes.gameOffset.height;
+        this.getContext(layer).clearRect(
+            -offsetW / 2 | 0, -offsetH / 2 | 0,
+            this.sizes.inPX.width + offsetW, this.sizes.inPX.height + offsetH);
     }
 }
 
