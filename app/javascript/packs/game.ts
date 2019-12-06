@@ -12,10 +12,16 @@ Promise.all<Drawer[], Drawable>([
             console.log(entity);
             if (entity.id) {
                 getDrawableField(`${entity.id}`)
-                    .then(chest => levelField.setLevel(chest));
+                    .then(drawable => levelField.setLevel(drawable));
+
             }
         });
         levelField.setLevel(objects[1]);
+        setInterval(() => {
+            getDrawableField(``)
+                .then(drawable => levelField.setLevel(drawable));
+        }, 1000)
+
     })
     .catch(reason => {
         const err = `Draw level: ${reason}`;
