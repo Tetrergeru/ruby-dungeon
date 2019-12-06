@@ -15,8 +15,8 @@ class Chest
     c_items = inventory.items
     u_items = user.inventory.items
 
-    w = 4
-    h = ([c_items.count, u_items.count].max + w - 1) / w + 1
+    w = 6
+    h = 40 / w
     r = [{ x: 0, y: 0, name: :back, id: 'back' }]
 
     (0..(c_items.count - 1)).each do |i|

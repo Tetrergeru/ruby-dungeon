@@ -14,9 +14,15 @@ class Level
   embeds_many :doors
 
   def show(user)
-    return chests.find($redis_action.get(user.id)).show(user) if $redis_action.get(user.id)
-
-    to_json
+    redis_data = $redis_action.get(user.id)
+    if redis_data
+      condition = JSON.load(redis_data)
+      if condition['action'] == 'chest'
+        return chests.find(condition['chest_id']).show(user)
+      end
+    else
+      to_json
+    end
   end
 
   def self.random_generate(owner = nil)
@@ -42,10 +48,15 @@ class Level
   end
 
   def action(user, action_id)
-    if $redis_action.get(user.id)
-      chests.find($redis_action.get(user.id)).action(user, action_id)
+    redis_data = $redis_action.get(user.id)
+    if redis_data
+      condition = JSON.load(redis_data)
+      if condition['action'] == 'chest'
+        chests.find(condition['chest_id']).action(user, action_id)
+      end
     elsif chests.any? { |i| i.id.to_s == action_id }
-      $redis_action.set(user.id, action_id, ex: 600)
+      $redis_action.set(user.id, {action: :chest, chest_id: action_id}.to_json, ex: 600)
+
     elsif doors.any? { |i| i.id.to_s == action_id }
       doors.find(action_id).action(user, action_id)
     end
