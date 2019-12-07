@@ -81,6 +81,10 @@
 
   "aim":{
     "file": "aim.png"
+  },
+
+  "ghost":{
+    "file": "ghost.png"
   }
 
 }

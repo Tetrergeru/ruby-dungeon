@@ -19,6 +19,8 @@ class Level
       condition = JSON.load(redis_data)
       if condition['action'] == 'chest'
         return chests.find(condition['chest_id']).show(user)
+      elsif condition['action'] == 'fight'
+        return show_fight( condition['fight'], user)
       end
     else
       to_json
@@ -54,9 +56,14 @@ class Level
       if condition['action'] == 'chest'
         chests.find(condition['chest_id']).action(user, action_id)
       end
+      if condition['action'] == 'fight'
+        action_fight(condition['fight'], user, action_id)
+      end
+
     elsif chests.any? { |i| i.id.to_s == action_id }
       $redis_action.set(user.id, {action: :chest, chest_id: action_id}.to_json, ex: 600)
-
+    elsif monsters.any? { |i| i.id.to_s == action_id }
+      $redis_action.set(user.id, {action: :fight, fight: { time: Time.now.to_i, assaulter: :user, user_hp: 2, monster_hp: 2}}.to_json, ex: 600)
     elsif doors.any? { |i| i.id.to_s == action_id }
       doors.find(action_id).action(user, action_id)
     end
@@ -105,5 +112,74 @@ class Level
     end
 
     { width: width, height: height, floor: :floor, wall: :wall, items: r }
+  end
+
+  def action_fight(fight, user, action_id)
+    if action_id == 'back'
+      $redis_action.del(user.id)
+    elsif action_id == 'impact'
+      if fight['assaulter'] == 'user'
+        fight['monster_hp'] -= 1
+        if fight['monster_hp'] == 0
+          $redis_action.del(user.id)
+        else
+          $redis_action.set(user.id, {action: :fight, fight: fight}.to_json, ex: 600)
+        end
+      end
+    end
+  end
+
+  def hp(number)
+    case number
+    when 2
+      :hp_2
+    when 1
+      :hp_1
+    else
+      :hp_0
+    end
+  end
+
+
+  def show_fight(fight, user)
+    dt = 3 +  fight['time'] - Time.now.to_i
+    if dt < 0
+      dt = 3
+      fight['time'] = Time.now.to_i
+      if fight['assaulter'] == 'user'
+        fight['assaulter'] = 'monster'
+      else
+        fight['assaulter'] = 'user'
+      end
+      $redis_action.set(user.id, {action: :fight, fight: fight}.to_json, ex: 600)
+    end
+    time_anim = nil
+    case dt
+    when 3
+      time_anim = :time_3
+    when 2
+      time_anim = :time_2
+    when 1
+      time_anim = :time_1
+    else
+      time_anim = :time_0
+    end
+
+
+
+    r = []
+    r << { x: (fight['assaulter'] == 'user')?5:1, y: 4, name: time_anim }
+    r << { x: (fight['assaulter'] == 'monster')?5:1, y: 4, name: :time_0 }
+    r << { x: 1, y: 2, name: :monster }
+    r << { x: 5, y: 2, name: :ghost }
+    r << { x: 0, y: 0, name: :back, id: :back }
+    
+    r << { x: 1, y: 1, name: hp(fight['monster_hp']) }
+    r << { x: 5, y: 1, name: hp(fight['user_hp']) }
+    if fight['assaulter'] == 'user'
+      r << { x: 4, y: 3, name: :aim, id: :impact}
+    end
+
+    { width: 7, height: 5, floor: :chest_bottom, wall: :chest_wall, items: r }
   end
 end
