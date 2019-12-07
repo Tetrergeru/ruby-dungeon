@@ -49,5 +49,38 @@
 
   "chest_wall":{
     "file": "chest_wall.png"
+  },
+
+  "hp_0":{
+    "file": "hp/hp_0.png"
+  },
+
+  "hp_1":{
+    "file": "hp/hp_1.png"
+  },
+
+  "hp_2":{
+    "file": "hp/hp_2.png"
+  },
+
+  "time_0":{
+    "file": "time/time_0.png"
+  },
+
+  "time_1":{
+    "file": "time/time_1.png"
+  },
+
+  "time_2":{
+    "file": "time/time_2.png"
+  },
+
+  "time_3":{
+    "file": "time/time_3.png"
+  },
+
+  "aim":{
+    "file": "aim.png"
   }
+
 }
