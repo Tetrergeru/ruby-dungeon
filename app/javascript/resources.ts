@@ -1,4 +1,5 @@
 import {fetchJSON} from "http_helpers";
+import {must} from "helpers";
 
 interface Texture {
     readonly file: string
@@ -7,11 +8,11 @@ interface Texture {
 export function downloadImages() {
     return fetchJSON(`/assets/textures.json`)
         .then(json => {
-            const textures = json as Map<string, Texture>;
+            const textures = json as Array<Texture>;
             const promises = new Array<Promise<ImageBitmapSource>>();
             const names = new Array<string>();
             for (let key in textures) {
-                promises.push(loadImage(textures[key].file));
+                promises.push(loadImage(must(textures[key]).file));
                 names.push(key)
             }
             return Promise.all(promises)

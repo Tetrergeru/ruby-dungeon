@@ -23,7 +23,7 @@ export class Drawable {
         public readonly entity: Array<Entity>) {
         entity.sort((a, b) => a.y - b.y)
     }
-    equalEnvironments(other: Drawable) {
+    equalEnvironments(other: Drawable|null|undefined) {
         return other&&
             this.width===other.width&&
             this.height===other.height&&
@@ -33,7 +33,7 @@ export class Drawable {
 }
 
 function parseDrawable(raw: any) {
-    return new Drawable(raw.width, raw.height, raw.floor, raw.wall, raw.items.map(x => new Entity(x)))
+    return new Drawable(raw.width, raw.height, raw.floor, raw.wall, raw.items.map((x: any) => new Entity(x)))
 }
 
 export function getDrawableField(id: string): Promise<Drawable> {
