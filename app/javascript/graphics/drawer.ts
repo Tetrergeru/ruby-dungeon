@@ -2,6 +2,7 @@ import {Drawable, Entity} from "models";
 import {downloadImages} from "resources";
 import {CheckeredField, Layer} from "graphics/checkered_field";
 import {Coordinately, Sizeable} from "graphics/models";
+import {must} from "helpers";
 
 export function getDrawers(...ids: string[]) {
     return downloadImages()
@@ -10,7 +11,7 @@ export function getDrawers(...ids: string[]) {
             return Promise.all(
                 ids.map(
                     id => new Drawer(
-                        CheckeredField.Make(document.getElementById(id)), collection)));
+                        CheckeredField.Make(must(document.getElementById(id))), collection)));
         })
         .catch(reason => {
             const err = `Download or create imgs: ${reason}`;
@@ -26,10 +27,10 @@ function drawCell(cell: Sizeable) {
     };
 }
 
-type ClickableEventListener = (Entity) => void;
+type ClickableEventListener = (e: Entity) => void;
 
 export class Drawer {
-    private drawable: Drawable;
+    private drawable?: Drawable;
 
     constructor(
         private field: CheckeredField,
@@ -101,7 +102,7 @@ export class Drawer {
     }
 
     private getEntity(cell: Coordinately) {
-        return this.drawable.entity.find(entity => entity.x == cell.x && entity.y == cell.y);
+        return must(this.drawable).entity.find(entity => entity.x == cell.x && entity.y == cell.y);
     }
 
     private Must(resource: string) {

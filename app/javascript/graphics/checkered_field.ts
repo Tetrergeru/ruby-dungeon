@@ -1,4 +1,5 @@
 import {Coordinately, Sizeable} from "graphics/models";
+import {must} from "helpers";
 
 export enum Layer {
     Background, Main//, Space
@@ -23,38 +24,19 @@ class FieldSizes {
         this.offset = Sizeable.Round(Sizeable.Multiply(this.offset, 0.5));
         this.gameOffset = Sizeable.Multiply(this.offset, 1 / this.scale);
     }
+
+    static CreateByElement(element: Element, field: Sizeable, cell: Sizeable): FieldSizes {
+        let inRealPX = Sizeable.Make(element.clientWidth, element.clientHeight);
+        return new FieldSizes(inRealPX, field, cell);
+    }
 }
 
 export class CheckeredField {
+    public sizes: FieldSizes;
     private canvases = new Map<Layer, HTMLCanvasElement>();
     private contexts = new Map<Layer, CanvasRenderingContext2D>();
     private clickListeners = new Array<ClickEventListener>();
-
-    addEventListener(event: FieldEvent, callback: ClickEventListener) {
-        switch (event) {
-            case "click":
-                this.clickListeners.push(callback);
-                break;
-            default:
-                throw new RangeError(`${event} is not a FieldEvent`)
-        }
-    }
-
-    public sizes: FieldSizes;
     private _currentCell = {x: 0, y: 0};
-
-    get activeCell(): Coordinately {
-        // console.log(this._currentCell);
-        return this._currentCell;
-    }
-
-    getContext(layer: Layer): CanvasRenderingContext2D {
-        let context = this.contexts.get(layer);
-        if (!context) {
-            throw new RangeError(`Incorrect layer: ${layer}`);
-        }
-        return context;
-    }
 
     constructor(
         private mainCanvas: HTMLCanvasElement,
@@ -62,7 +44,7 @@ export class CheckeredField {
     ) {
         this.canvases.set(Layer.Main, mainCanvas);
         this.canvases.set(Layer.Background, backgroundCanvas);
-        this.resize({width: 1, height: 1}, {
+        this.sizes = FieldSizes.CreateByElement(must(this.canvases.get(Layer.Main)), {width: 1, height: 1}, {
             width: 16,
             height: 16
         });
@@ -75,16 +57,9 @@ export class CheckeredField {
         });
     }
 
-    private getCurrentCell(event: MouseEvent): Coordinately {
-        let real = Sizeable.Sum(
-            Sizeable.Multiply(this.sizes.offset, -1),
-            Sizeable.Make(
-                event.offsetX,
-                event.offsetY));
-        return {
-            x: (real.width / this.sizes.scale / this.sizes.cell.width) | 0,
-            y: (real.height / this.sizes.scale / this.sizes.cell.height) | 0
-        };
+    get activeCell(): Coordinately {
+        // console.log(this._currentCell);
+        return this._currentCell;
     }
 
     static Make(root: HTMLElement) {
@@ -95,8 +70,26 @@ export class CheckeredField {
         return new CheckeredField(canvasMain, canvasBack)
     }
 
+    addEventListener(event: FieldEvent, callback: ClickEventListener) {
+        switch (event) {
+            case "click":
+                this.clickListeners.push(callback);
+                break;
+            default:
+                throw new RangeError(`${event} is not a FieldEvent`)
+        }
+    }
+
+    getContext(layer: Layer): CanvasRenderingContext2D {
+        let context = this.contexts.get(layer);
+        if (!context) {
+            throw new RangeError(`Incorrect layer: ${layer}`);
+        }
+        return context;
+    }
+
     resize(field: Sizeable, cell: Sizeable) {
-        this.calcNewSizes(field, cell);
+        this.sizes = FieldSizes.CreateByElement(must(this.canvases.get(Layer.Main)), field, cell);
         this.canvases.forEach(
             (canvas, layer) => {
                 let context = CanvasHelper.getContext(CanvasHelper.setSize(canvas, this.sizes.inRealPX));
@@ -108,14 +101,8 @@ export class CheckeredField {
             });
     }
 
-    private calcNewSizes(field: Sizeable, cell: Sizeable) {
-        let firstCanvas = this.canvases.get(Layer.Main);
-        let inRealPX = Sizeable.Make(firstCanvas.clientWidth, firstCanvas.clientHeight);
-        this.sizes = new FieldSizes(inRealPX, field, cell);
-    }
-
     drawSpriteIn(layer: Layer, currentCell: Coordinately,
-                 size: Sizeable, draw: (CanvasRenderingContext2D) => void) {
+                 size: Sizeable, draw: (ctx: CanvasRenderingContext2D) => void) {
         let context = this.getContext(layer);
         context.save();
         context.translate(currentCell.x * this.sizes.cell.width,
@@ -140,6 +127,18 @@ export class CheckeredField {
         this.getContext(layer).clearRect(
             -offsetW / 2 | 0, -offsetH / 2 | 0,
             this.sizes.inPX.width + offsetW, this.sizes.inPX.height + offsetH);
+    }
+
+    private getCurrentCell(event: MouseEvent): Coordinately {
+        let real = Sizeable.Sum(
+            Sizeable.Multiply(this.sizes.offset, -1),
+            Sizeable.Make(
+                event.offsetX,
+                event.offsetY));
+        return {
+            x: (real.width / this.sizes.scale / this.sizes.cell.width) | 0,
+            y: (real.height / this.sizes.scale / this.sizes.cell.height) | 0
+        };
     }
 }
 
