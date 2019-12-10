@@ -35,13 +35,13 @@ class User
   def action(action_id)
     # FIXME
     u = User.find(id)
-    Level.find(u.location.to_s).action(u, action_id)
+    State.action(u, action_id)
     u.save
   end
 
   def show
     # FIXME
     u = User.find(id)
-    Level.find(u.location).show(u)
+    State.show(u)
   end
 end

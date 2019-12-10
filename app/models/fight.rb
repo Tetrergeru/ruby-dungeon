@@ -21,7 +21,7 @@ class Fight
       else
         @assaulter = 'user'
       end
-      $redis_action.set(user.id, {action: :fight, fight: self}.to_json, ex: 600)
+      State.change(user.id, 'fight', self)
     end
     time_anim = 'time_' + dt.to_s
 
@@ -43,24 +43,24 @@ class Fight
 
   def action(user, action_id)
     if action_id == 'back'
-      $redis_action.del(user.id)
+      State.clear(user)
     elsif action_id == 'impact'
       if @assaulter == 'user'
         @monster_hp -= 1
         if @monster_hp < 0
-          $redis_action.del(user.id)
+          State.clear(user)
         else
-          $redis_action.set(user.id, {action: :fight, fight: self}.to_json, ex: 600)
+          State.change(user.id, 'fight', self)
         end
       end
     end
   end
 
-  def self.from_json string
+  def self.from_hash hash
     f = Fight.new
-      JSON.load(string).each do |var, val|
-          f.instance_variable_set ('@' + var), val
-      end
-      f
+    hash.each do |var, val|
+        f.instance_variable_set ('@' + var), val
+    end
+    f
   end
 end

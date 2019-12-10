@@ -24,5 +24,6 @@ class Door
     end
     d.save
     user.location = d.target_level
+    State.clear(user)
   end
 end

@@ -14,19 +14,36 @@ class Level
   embeds_many :doors
 
   def show(user)
-    redis_data = $redis_action.get(user.id)
-    
-    if redis_data
-      condition = JSON.load(redis_data)
+    r = []
 
-      if condition['action'] == 'chest'
-        return chests.find(condition['chest_id']).show(user)
-      elsif condition['action'] == 'fight'
-        Fight.from_json(condition['fight'].to_json).show(user)
-      end
-    else
-      to_json
+    chests.all.each do |c|
+      r << { id: c.id.to_s, x: c.x, y: c.y, name: :chest }
     end
+
+    monsters.all.each do |c|
+      r << { id: c.id.to_s, x: c.x, y: c.y, name: :monster }
+    end
+
+    walls.all.each do |c|
+      r << { x: c.x, y: c.y, name: :wall }
+    end
+
+    doors.all.each do |c|
+      r << { id: c.id.to_s, x: c.x, y: c.y, name: :door }
+    end
+
+    { width: width, height: height, floor: :floor, wall: :wall, items: r }
+  end
+
+  def action(user, action_id)
+    if chests.any? { |i| i.id.to_s == action_id }
+      State.change(user.id, 'chest', action_id)
+    elsif monsters.any? { |i| i.id.to_s == action_id }
+      State.change(user.id, 'fight', Fight.new)
+    elsif doors.any? { |i| i.id.to_s == action_id }
+      doors.find(action_id).action(user, action_id)
+    end
+    save
   end
 
   def self.random_generate(owner = nil)
@@ -51,27 +68,6 @@ class Level
     l
   end
 
-  def action(user, action_id)
-    redis_data = $redis_action.get(user.id)
-    if redis_data
-      condition = JSON.load(redis_data)
-      if condition['action'] == 'chest'
-        chests.find(condition['chest_id']).action(user, action_id)
-      end
-      if condition['action'] == 'fight'
-        Fight.from_json(condition['fight'].to_json).action(user, action_id)
-      end
-
-    elsif chests.any? { |i| i.id.to_s == action_id }
-      $redis_action.set(user.id, {action: :chest, chest_id: action_id}.to_json, ex: 600)
-    elsif monsters.any? { |i| i.id.to_s == action_id }
-      $redis_action.set(user.id, {action: :fight, fight: Fight.new}.to_json, ex: 600)
-    elsif doors.any? { |i| i.id.to_s == action_id }
-      doors.find(action_id).action(user, action_id)
-    end
-    save
-  end
-
   def show_item(item_id)
     i = chests.select { |c| c.id.to_s == item_id }
     return 'not correct id' if i.empty?
@@ -90,29 +86,5 @@ class Level
     when 3
       doors << Door.new(x: x, y: y)
     end
-  end
-
-  private
-
-  def to_json(*_args)
-    r = []
-
-    chests.all.each do |c|
-      r << { id: c.id.to_s, x: c.x, y: c.y, name: :chest }
-    end
-
-    monsters.all.each do |c|
-      r << { id: c.id.to_s, x: c.x, y: c.y, name: :monster }
-    end
-
-    walls.all.each do |c|
-      r << { x: c.x, y: c.y, name: :wall }
-    end
-
-    doors.all.each do |c|
-      r << { id: c.id.to_s, x: c.x, y: c.y, name: :door }
-    end
-
-    { width: width, height: height, floor: :floor, wall: :wall, items: r }
   end
 end
