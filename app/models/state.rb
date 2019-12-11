@@ -56,20 +56,33 @@ class State
     end
   end
   
+  def self.update_chest(chest_id, hash)
+    $redis_action.set(chest_id, hash.to_json, ex: 600)
+  end
+
   def show_level(level_id, user_id)
     level = $redis_action.get(level_id)
     if !level
-      level = Level.find(level_id).show(user_id).to_json
+      level = Level.find(level_id).abstract_show.to_json
       $redis_action.set(level_id, level, ex: 600)
     end
-    JSON.load(level)
+    Level.add_user(JSON.load(level), user_id)
+  end
+
+  def show_chest(chest_id, user_id)
+    chest = $redis_action.get(chest_id)
+    if !chest
+      chest = Level.find(User.find(user_id).location).chests.find(chest_id).abstract_show.to_json
+      $redis_action.set(chest_id, chest, ex: 600)
+    end
+    Chest.add_user(JSON.load(chest), user_id)
   end
 
   def show(user_id)
     if @name == 'level'
       show_level(@value, user_id)
     elsif @name == 'chest'
-      Level.find(User.find(user_id).location).chests.find(@value).show(User.find(user_id))
+      show_chest(@value, user_id)
     elsif @name == 'fight'
       Fight.from_hash(@value).show(User.find(user_id))
     end

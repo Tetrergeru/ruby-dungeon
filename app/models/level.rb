@@ -13,7 +13,7 @@ class Level
   embeds_many :walls
   embeds_many :doors
 
-  def show(user_id)
+  def abstract_show
     r = []
 
     chests.all.each do |c|
@@ -33,6 +33,10 @@ class Level
     end
 
     { width: width, height: height, floor: :floor, wall: :wall, items: r }
+  end
+
+  def self.add_user(hash, user_id)
+    hash
   end
 
   def action(user, action_id)

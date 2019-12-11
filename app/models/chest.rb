@@ -11,9 +11,8 @@ class Chest
   embeds_one :inventory
   embedded_in :level
 
-  def show(user)
+  def abstract_show
     c_items = inventory.items
-    u_items = user.inventory.items
 
     w = 6
     h = 40 / w
@@ -21,10 +20,6 @@ class Chest
 
     (0..(c_items.count - 1)).each do |i|
       r << { x: i % w + w + 1, y: i / w + 1, name: c_items[i].name, id: c_items[i].id.to_s }
-    end
-
-    (0..(u_items.count - 1)).each do |i|
-      r << { x: i % w, y: i / w + 1, name: u_items[i].name, id: u_items[i].id.to_s }
     end
 
     (1..(h - 1)).each do |i|
@@ -36,6 +31,20 @@ class Chest
     end
 
     { width: w * 2 + 1, height: h, floor: :chest_bottom, wall: :chest_wall, items: r }
+  end
+
+  def self.add_user(hash, user_id)
+    user = User.find(user_id)
+    u_items = user.inventory.items
+
+    w = 6
+    h = 40 / w
+
+    (0..(u_items.count - 1)).each do |i|
+      hash['items'] << { x: i % w, y: i / w + 1, name: u_items[i].name, id: u_items[i].id.to_s }
+    end
+
+    hash
   end
 
   def action(user, action_id)
@@ -51,15 +60,13 @@ class Chest
       item = c_items.find(action_id)
       u_items << item.clone
       c_items.delete(item)
-      return
-    end
-
-    if u_items.any? { |i| i.id.to_s == action_id }
+    elsif u_items.any? { |i| i.id.to_s == action_id }
       item = u_items.find(action_id)
       c_items << item.clone
       u_items.delete(item)
-      nil
     end
+
+    State.update_chest(id, abstract_show)
   end
 
   def self.random_generate(x, y)
