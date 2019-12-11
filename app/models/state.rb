@@ -6,16 +6,16 @@ class State
     @value = value
   end
 
-  def self.show(user)
+  def self.show(user_id)
 
-    state = $redis_action.get(user.id)
+    state = $redis_action.get(user_id)
     if state
       state = State.from_json(state)
     else
-      state = State.new('level', user.location)
-      $redis_action.set(user.id, state.to_json, ex: 600)
+      state = State.new('level', User.all.find(user_id).location)
+      $redis_action.set(user_id, state.to_json, ex: 600)
     end
-    state.show(user)
+    state.show(user_id)
   end
 
   def self.action(user, action_id)
@@ -56,13 +56,22 @@ class State
     end
   end
   
-  def show(user)
+  def show_level(level_id, user_id)
+    level = $redis_action.get(level_id)
+    if !level
+      level = Level.find(level_id).show(user_id).to_json
+      $redis_action.set(level_id, level, ex: 600)
+    end
+    JSON.load(level)
+  end
+
+  def show(user_id)
     if @name == 'level'
-      Level.find(@value).show(user)
+      show_level(@value, user_id)
     elsif @name == 'chest'
-      Level.find(user.location).chests.find(@value).show(user)
+      Level.find(User.find(user_id).location).chests.find(@value).show(User.find(user_id))
     elsif @name == 'fight'
-      Fight.from_hash(@value).show(user)
+      Fight.from_hash(@value).show(User.find(user_id))
     end
   end
 end

@@ -13,7 +13,7 @@ class Level
   embeds_many :walls
   embeds_many :doors
 
-  def show(user)
+  def show(user_id)
     r = []
 
     chests.all.each do |c|

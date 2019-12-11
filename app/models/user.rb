@@ -31,17 +31,15 @@ class User
     user.save
     user
   end
-
-  def action(action_id)
+  
+  def self.action(user_id, action_id)
     # FIXME
-    u = User.find(id)
+    u = User.find(user_id)
     State.action(u, action_id)
     u.save
   end
 
-  def show
-    # FIXME
-    u = User.find(id)
-    State.show(u)
+  def self.show(user_id)
+    State.show(user_id)
   end
 end

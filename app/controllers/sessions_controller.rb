@@ -7,9 +7,9 @@ class SessionsController < ActionController::Base
   end
 
   def destroy
-    if @current_user
+    if @current_user_id
       session.delete(:user_id)
-      @current_user = nil
+      @current_user_id = nil
       flash[:success] = 'Successfully logged out!'
     end
     redirect_to root_path
