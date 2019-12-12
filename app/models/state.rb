@@ -84,7 +84,7 @@ class State
     elsif @name == 'chest'
       show_chest(@value, user_id)
     elsif @name == 'fight'
-      Fight.from_hash(@value).show(User.find(user_id))
+      Fight.from_hash(@value).show(user_id)
     end
   end
 end

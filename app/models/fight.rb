@@ -11,7 +11,7 @@ class Fight
     'hp_' + number.to_s
   end
 
-  def show(user)
+  def show(user_id)
     dt = 3 +  @time - Time.now.to_i
     if dt < 0
       dt = 3
@@ -21,7 +21,7 @@ class Fight
       else
         @assaulter = 'user'
       end
-      State.change(user.id, 'fight', self)
+      State.change(user_id, 'fight', self)
     end
     time_anim = 'time_' + dt.to_s
 
