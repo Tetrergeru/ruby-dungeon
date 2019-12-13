@@ -48,11 +48,15 @@ class State
   end
 
   def self.change(user, cls, value)
-    $redis_action.set(user_id, State.new(cls, value, cls.prepare_user(user)).to_json, ex: 600)
+    update(user.id, State.new(cls, value, cls.prepare_user(user)))
   end
 
   def self.change_id(user_id, cls, value)
-    change(User.find(user_id), cls, value)
+    update(user_id, State.new(cls, value, cls.prepare_user_id(user_id)))
+  end
+
+  def self.update(item_id, value)
+    $redis_action.set(item_id.to_s, value.to_json, ex: 600)
   end
 
   def self.from_json string
@@ -70,9 +74,9 @@ class State
   def action(user, action_id)
     cls = Object.const_get(@name)
     case cls
-    when Chest
-      Level.find(@value).action(user, action_id)
     when Level
+      Level.find(@value).action(user, action_id)
+    when Chest
       Level.find(user.location).chests.find(@value).action(user, action_id)
     when Fight
       Fight.from_hash(@value).action(user, action_id)
@@ -85,8 +89,9 @@ private
   def load_level(level_id, user_id)
     level = $redis_action.get(level_id)
     if !level
-      level = Level.find(level_id).abstract_show.to_json
-      $redis_action.set(level_id, level, ex: 600)
+      level = Level.find(level_id).abstract_show
+      State.update(level_id, level)
+      level = level.to_json
     end
     JSON.load(level)
   end
@@ -94,8 +99,9 @@ private
   def load_chest(chest_id, user_id)
     chest = $redis_action.get(chest_id)
     if !chest
-      chest = Level.find(User.find(user_id).location).chests.find(chest_id).abstract_show.to_json
-      $redis_action.set(chest_id, chest, ex: 600)
+      chest = Level.find(User.find(user_id).location).chests.find(chest_id).abstract_show
+      State.update(chest_id, chest)
+      chest = chest.to_json
     end
     JSON.load(chest)
   end

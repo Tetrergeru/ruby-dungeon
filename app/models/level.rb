@@ -41,9 +41,9 @@ class Level
 
   def action(user, action_id)
     if chests.any? { |i| i.id.to_s == action_id }
-      State.change(user.id, 'chest', action_id)
+      State.change(user, Chest, action_id)
     elsif monsters.any? { |i| i.id.to_s == action_id }
-      State.change(user.id, 'fight', Fight.new)
+      State.change(user, Fight, Fight.new)
     elsif doors.any? { |i| i.id.to_s == action_id }
       doors.find(action_id).action(user, action_id)
     end
@@ -51,6 +51,10 @@ class Level
   end
 
   def self.prepare_user(user)
+    {}
+  end
+
+  def self.prepare_user_id(user_id)
     {}
   end
 

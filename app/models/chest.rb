@@ -55,6 +55,10 @@ class Chest
     r
   end
 
+  def self.prepare_user_id(user_id)
+    prepare_user(User.find(user_id))
+  end
+
   def action(user, action_id)
     if action_id == 'back'
       State.clear(user)
@@ -68,13 +72,16 @@ class Chest
       item = c_items.find(action_id)
       u_items << item.clone
       c_items.delete(item)
+      save
     elsif u_items.any? { |i| i.id.to_s == action_id }
       item = u_items.find(action_id)
       c_items << item.clone
       u_items.delete(item)
+      save
     end
 
-    State.update_chest(id, abstract_show)
+    State.change(user, Chest, id.to_s)
+    State.update(id.to_s, abstract_show)
   end
 
   def self.random_generate(x, y)
