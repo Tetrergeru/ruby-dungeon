@@ -21,7 +21,7 @@ class Fight
       else
         @assaulter = 'user'
       end
-      State.change(user_id, 'fight', self)
+      State.change_id(user_id, Fight, self)
     end
     time_anim = 'time_' + dt.to_s
 
@@ -41,6 +41,14 @@ class Fight
     { width: 7, height: 5, floor: :chest_bottom, wall: :chest_wall, items: r }
   end
 
+  def self.prepare_user(user)
+    {}
+  end
+
+  def self.prepare_user_id(user_id)
+    {}
+  end
+
   def action(user, action_id)
     if action_id == 'back'
       State.clear(user)
@@ -50,7 +58,7 @@ class Fight
         if @monster_hp < 0
           State.clear(user)
         else
-          State.change(user.id, 'fight', self)
+          State.change(user, Fight, self)
         end
       end
     end

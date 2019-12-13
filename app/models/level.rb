@@ -39,6 +39,14 @@ class Level
     hash
   end
 
+  def self.prepare_user(user)
+    {}
+  end
+
+  def self.prepare_user_id(user_id)
+    {}
+  end
+
   def action(user, action_id)
     if chests.any? { |i| i.id.to_s == action_id }
       State.change(user, Chest, action_id)
@@ -48,14 +56,6 @@ class Level
       doors.find(action_id).action(user, action_id)
     end
     save
-  end
-
-  def self.prepare_user(user)
-    {}
-  end
-
-  def self.prepare_user_id(user_id)
-    {}
   end
 
   def self.random_generate(owner = nil)
