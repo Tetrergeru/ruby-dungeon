@@ -1,1 +1,1 @@
-$redis_action = Redis.new
+$redis_action = Redis.new driver: :hiredis
