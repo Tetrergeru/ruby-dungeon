@@ -35,7 +35,7 @@ class Level
     { width: width, height: height, floor: :floor, wall: :wall, items: r }
   end
 
-  def self.add_user(hash, user_id)
+  def self.add_user(hash, meta)
     hash
   end
 
@@ -48,6 +48,10 @@ class Level
       doors.find(action_id).action(user, action_id)
     end
     save
+  end
+
+  def self.prepare_user(user)
+    {}
   end
 
   def self.random_generate(owner = nil)

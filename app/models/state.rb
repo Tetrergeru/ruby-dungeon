@@ -1,21 +1,38 @@
 
 
 class State
-  def initialize(name, value)
-    @name = name
+  def initialize(cls, value, meta)
+    @name = cls.name
     @value = value
+    @meta = meta
   end
 
   def self.show(user_id)
-
     state = $redis_action.get(user_id)
     if state
       state = State.from_json(state)
     else
-      state = State.new('level', User.all.find(user_id).location)
+      user = User.all.find(user_id)
+      state = State.new(Level, user.location, Level.prepare_user(user))
       $redis_action.set(user_id, state.to_json, ex: 600)
     end
     state.show(user_id)
+  end
+
+  def show(user_id)
+    cls = Object.const_get(@name)
+    hash = nil
+    case cls
+    when Chest
+      hash = load_chest(@value, user_id)
+    when Level
+      hash = load_level(@value, user_id)
+    when Fight
+      hash = Fight.from_hash(@value)
+    else
+      raise ExceptionType, "unknown type" + @name
+    end
+    cls.add_user(hash, @meta)
   end
 
   def self.action(user, action_id)
@@ -24,18 +41,22 @@ class State
     if state
       state = State.from_json(state)
     else
-      state = State.new('level', user.location)
-      $redis_action.set(u.id, state.to_json, ex: 600)
+      state = State.new(Level, user.location, Level.prepare_user(user))
+      $redis_action.set(user.id, state.to_json, ex: 600)
     end
     state.action(user, action_id)
   end
-  
-  def self.change(user_id, name, value)
-    $redis_action.set(user_id, State.new(name, value).to_json, ex: 600)
+
+  def self.change(user, cls, value)
+    $redis_action.set(user_id, State.new(cls, value, cls.prepare_user(user)).to_json, ex: 600)
+  end
+
+  def self.change_id(user_id, cls, value)
+    change(User.find(user_id), cls, value)
   end
 
   def self.from_json string
-    s = State.new(nil, nil)
+    s = State.new(Object, nil, nil)
     JSON.load(string).each do |var, val|
         s.instance_variable_set ('@' + var), val
     end
@@ -43,48 +64,39 @@ class State
   end
 
   def self.clear(user)
-    change(user.id, 'level', user.location)
+    change(user, Level, user.location)
   end
 
   def action(user, action_id)
-    if @name == 'level'
+    cls = Object.const_get(@name)
+    case cls
+    when Chest
       Level.find(@value).action(user, action_id)
-    elsif @name == 'chest'
+    when Level
       Level.find(user.location).chests.find(@value).action(user, action_id)
-    elsif @name == 'fight'
+    when Fight
       Fight.from_hash(@value).action(user, action_id)
+    else
+      raise ExceptionType, "unknown type" + @name
     end
   end
-  
-  def self.update_chest(chest_id, hash)
-    $redis_action.set(chest_id, hash.to_json, ex: 600)
-  end
 
-  def show_level(level_id, user_id)
+private
+  def load_level(level_id, user_id)
     level = $redis_action.get(level_id)
     if !level
       level = Level.find(level_id).abstract_show.to_json
       $redis_action.set(level_id, level, ex: 600)
     end
-    Level.add_user(JSON.load(level), user_id)
+    JSON.load(level)
   end
 
-  def show_chest(chest_id, user_id)
+  def load_chest(chest_id, user_id)
     chest = $redis_action.get(chest_id)
     if !chest
       chest = Level.find(User.find(user_id).location).chests.find(chest_id).abstract_show.to_json
       $redis_action.set(chest_id, chest, ex: 600)
     end
-    Chest.add_user(JSON.load(chest), user_id)
-  end
-
-  def show(user_id)
-    if @name == 'level'
-      show_level(@value, user_id)
-    elsif @name == 'chest'
-      show_chest(@value, user_id)
-    elsif @name == 'fight'
-      Fight.from_hash(@value).show(user_id)
-    end
+    JSON.load(chest)
   end
 end

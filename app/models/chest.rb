@@ -33,18 +33,26 @@ class Chest
     { width: w * 2 + 1, height: h, floor: :chest_bottom, wall: :chest_wall, items: r }
   end
 
-  def self.add_user(hash, user_id)
-    user = User.find(user_id)
-    u_items = user.inventory.items
-
-    w = 6
-    h = 40 / w
-
-    (0..(u_items.count - 1)).each do |i|
-      hash['items'] << { x: i % w, y: i / w + 1, name: u_items[i].name, id: u_items[i].id.to_s }
+  def self.add_user(hash, user_hash)
+    user_hash.each do |i|
+      hash['items'] << i
     end
 
     hash
+  end
+
+  def self.prepare_user(user)
+    u_items = user.inventory.items
+    w = 6
+    h = 40 / w
+
+    r = []
+
+    (0..(u_items.count - 1)).each do |i|
+      r << { x: i % w, y: i / w + 1, name: u_items[i].name, id: u_items[i].id.to_s }
+    end
+
+    r
   end
 
   def action(user, action_id)
