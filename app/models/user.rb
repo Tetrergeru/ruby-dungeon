@@ -9,6 +9,7 @@ class User
 
   field :name, type: String
   embeds_one :inventory
+  embeds_one :item
   field :location, type: BSON::ObjectId
 
   field :provider, type: String

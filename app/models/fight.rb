@@ -11,7 +11,7 @@ class Fight
     'hp_' + number.to_s
   end
 
-  def show(user_id)
+  def show(user_hash)
     dt = 3 +  @time - Time.now.to_i
     if dt < 0
       dt = 3
@@ -21,7 +21,7 @@ class Fight
       else
         @assaulter = 'user'
       end
-      State.change_id(user_id, Fight, self)
+      State.change_id(user_hash['id'], Fight, self)
     end
     time_anim = 'time_' + dt.to_s
 
@@ -34,19 +34,23 @@ class Fight
     
     r << { x: 1, y: 1, name: hp(@monster_hp) }
     r << { x: 5, y: 1, name: hp(@user_hp) }
-    if @assaulter == 'user'
-      r << { x: 4, y: 3, name: :aim, id: :impact}
+    if @assaulter == 'user' && user_hash['item']
+      r << user_hash['item']
     end
 
     { width: 7, height: 5, floor: :chest_bottom, wall: :chest_wall, items: r }
   end
 
   def self.prepare_user(user)
-    {}
+    if user.item
+      {id: user.id.to_s, item: { x: 4, y: 3, name: user.item.name, id: :impact}}
+    else
+      {id: user.id.to_s, item: nil}
+    end
   end
 
   def self.prepare_user_id(user_id)
-    {}
+    prepare_user(User.find(user_id))
   end
 
   def action(user, action_id)

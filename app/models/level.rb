@@ -32,23 +32,36 @@ class Level
       r << { id: c.id.to_s, x: c.x, y: c.y, name: :door }
     end
 
-    { width: width, height: height, floor: :floor, wall: :wall, items: r }
+    width.times do |i|
+      r << { x: i, y: height, name: :wall }
+    end
+
+    height.times do |i|
+      r << { x: width, y: i, name: :wall }
+    end
+
+    { width: width + 1, height: height + 1, floor: :floor, wall: :wall, items: r }
   end
 
   def self.add_user(hash, meta)
+    meta['x'] = hash['width'] - 1
+    meta['y'] = hash['height'] - 1
+    hash['items'] << meta
     hash
   end
 
   def self.prepare_user(user)
-    {}
+    Level.prepare_user_id(user.id)
   end
 
   def self.prepare_user_id(user_id)
-    {}
+    { id: :menu, x: nil, y: nil, name: :ghost }
   end
 
   def action(user, action_id)
-    if chests.any? { |i| i.id.to_s == action_id }
+    if action_id == 'menu'
+      State.change(user, Menu, Menu.new)
+    elsif chests.any? { |i| i.id.to_s == action_id }
       State.change(user, Chest, action_id)
     elsif monsters.any? { |i| i.id.to_s == action_id }
       State.change(user, Fight, Fight.new)

@@ -22,13 +22,14 @@ class State
   def show(user_id)
     cls = Object.const_get(@name)
     hash = nil
-    
     if cls == Chest
       hash = load_chest(@value, user_id)
     elsif cls == Level
       hash = load_level(@value, user_id)
     elsif cls == Fight
-      return Fight.from_hash(@value).show(user_id)
+      return Fight.from_hash(@value).show(@meta)
+    elsif cls == Menu
+      return Menu.from_hash(@value).show(@meta)
     else
       raise TypeError, "unknown type " + @name
     end
@@ -81,6 +82,8 @@ class State
       Level.find(@value).action(user, action_id)
     elsif cls == Fight
       Fight.from_hash(@value).action(user, action_id)
+    elsif cls == Menu
+      Menu.from_hash(@value).action(user, action_id)
     else
       raise TypeError, "unknown type " + @name
     end
