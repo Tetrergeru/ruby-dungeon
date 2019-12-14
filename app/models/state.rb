@@ -30,6 +30,8 @@ class State
       return Fight.from_hash(@value).show(@meta)
     elsif cls == Menu
       return Menu.from_hash(@value).show(@meta)
+    elsif cls == Snake
+      return Snake.from_hash(@value).show(@meta)
     else
       raise TypeError, "unknown type " + @name
     end
@@ -84,6 +86,8 @@ class State
       Fight.from_hash(@value).action(user, action_id)
     elsif cls == Menu
       Menu.from_hash(@value).action(user, action_id)
+    elsif cls == Snake
+      Snake.from_hash(@value).action(user, action_id)
     else
       raise TypeError, "unknown type " + @name
     end

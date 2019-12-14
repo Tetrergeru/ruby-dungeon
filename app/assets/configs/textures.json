@@ -85,6 +85,22 @@
 
   "ghost":{
     "file": "ghost.png"
+  },
+
+  "left_arrow":{
+    "file": "arrow/left.png"
+  },
+
+  "right_arrow":{
+    "file": "arrow/right.png"
+  },
+
+  "up_arrow":{
+    "file": "arrow/up.png"
+  },
+
+  "down_arrow":{
+    "file": "arrow/down.png"
   }
 
 }

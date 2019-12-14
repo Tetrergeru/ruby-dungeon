@@ -61,6 +61,8 @@ class Level
   def action(user, action_id)
     if action_id == 'menu'
       State.change(user, Menu, Menu.new)
+    elsif action_id == 'snake'
+      State.change(user, Snake, Snake.new)
     elsif chests.any? { |i| i.id.to_s == action_id }
       State.change(user, Chest, action_id)
     elsif monsters.any? { |i| i.id.to_s == action_id }
