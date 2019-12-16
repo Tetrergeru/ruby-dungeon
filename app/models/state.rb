@@ -21,22 +21,7 @@ class State
 
   def show(user_id)
     cls = Object.const_get(@name)
-    hash = nil
-    if cls == Chest
-      hash = load_chest(@value, user_id)
-    elsif cls == Level
-      hash = load_level(@value, user_id)
-    elsif cls == Fight
-      return Fight.from_hash(@value).show(@meta)
-    elsif cls == Menu
-      return Menu.from_hash(@value).show(@meta)
-    elsif cls == Snake
-      return Snake.from_hash(@value).show(@meta)
-    else
-      raise TypeError, "unknown type " + @name
-    end
-  
-    cls.add_user(hash, @meta)
+    cls.show(@value, user_id, @meta)
   end
 
   def self.action(user, action_id)
@@ -77,40 +62,10 @@ class State
 
   def action(user, action_id)
     cls = Object.const_get(@name)
-
-    if cls == Chest
-      Level.find(user.location).chests.find(@value).action(user, action_id)
-    elsif cls == Level
-      Level.find(@value).action(user, action_id)
-    elsif cls == Fight
-      Fight.from_hash(@value).action(user, action_id)
-    elsif cls == Menu
-      Menu.from_hash(@value).action(user, action_id)
-    elsif cls == Snake
-      Snake.from_hash(@value).action(user, action_id)
-    else
-      raise TypeError, "unknown type " + @name
-    end
+    cls.action(@value, user, action_id)
   end
 
-private
-  def load_level(level_id, user_id)
-    level = $redis_action.get(level_id)
-    if !level
-      level = Level.find(level_id).abstract_show
-      State.update(level_id, level)
-      level = level.to_json
-    end
-    JSON.load(level)
-  end
-
-  def load_chest(chest_id, user_id)
-    chest = $redis_action.get(chest_id)
-    if !chest
-      chest = Level.find(User.find(user_id).location).chests.find(chest_id).abstract_show
-      State.update(chest_id, chest)
-      chest = chest.to_json
-    end
-    JSON.load(chest)
+  def self.load(key)
+    $redis_action.get(key)
   end
 end

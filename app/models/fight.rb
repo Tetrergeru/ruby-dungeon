@@ -11,6 +11,10 @@ class Fight
     'hp_' + number.to_s
   end
 
+  def self.show(hash, user_id, user_hash)
+    from_hash(hash).show(user_hash)
+  end
+
   def show(user_hash)
     dt = 3 +  @time - Time.now.to_i
     if dt < 0
@@ -51,6 +55,10 @@ class Fight
 
   def self.prepare_user_id(user_id)
     prepare_user(User.find(user_id))
+  end
+
+  def self.action(hash, user, action_id)
+    Fight.from_hash(hash).action(user, action_id)
   end
 
   def action(user, action_id)

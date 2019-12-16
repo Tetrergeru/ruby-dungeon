@@ -1,7 +1,11 @@
 
-class Menu 
-  def show(user_hash)
+class Menu
 
+  def self.show(hash, user_id, user_hash)
+    from_hash(hash).show(user_hash)
+  end
+
+  def show(user_hash)
     w = 6
     h = 40 / w
     r = [{ x: 0, y: 0, name: :back, id: 'back' }]
@@ -40,6 +44,10 @@ class Menu
 
   def self.prepare_user_id(user_id)
     prepare_user(User.find(user_id))
+  end
+
+  def self.action(hash, user, action_id)
+    Menu.from_hash(hash).action(user, action_id)
   end
 
   def action(user, action_id)

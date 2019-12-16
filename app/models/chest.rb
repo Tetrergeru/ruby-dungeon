@@ -11,6 +11,16 @@ class Chest
   embeds_one :inventory
   embedded_in :level
 
+  def self.show(id, user_id, user_hash)
+    chest = State.load(id)
+    if !chest
+      chest = Level.find(User.find(user_id).location).chests.find(id).abstract_show
+      State.update(id, chest)
+      chest = chest.to_json
+    end
+    Chest.add_user(JSON.load(chest), user_hash)
+  end
+
   def abstract_show
     c_items = inventory.items
 
@@ -39,6 +49,10 @@ class Chest
     end
 
     hash
+  end
+
+  def self.action(id, user, action_id)
+    Level.find(user.location).chests.find(id).action(user, action_id)
   end
 
   def self.prepare_user(user)

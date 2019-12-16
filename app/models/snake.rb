@@ -10,6 +10,10 @@ class Snake
     @time = Time.now.to_i
   end
 
+  def self.show(hash, user_id, user_hash)
+    from_hash(hash).show(user_hash)
+  end
+
   def show(user_hash)
     current_time = Time.now.to_i
     r = user_hash['r']
@@ -96,6 +100,10 @@ class Snake
       end
     end
     {r: r, id: user_id}
+  end
+
+  def self.action(hash, user, action_id)
+    Snake.from_hash(hash).action(user, action_id)
   end
 
   def action(user, action_id)

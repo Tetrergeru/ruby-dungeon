@@ -13,6 +13,16 @@ class Level
   embeds_many :walls
   embeds_many :doors
 
+  def self.show(id, user_id, user_hash)
+    level = State.load(id)
+    if !level
+      level = Level.find(id).abstract_show
+      State.update(id, level)
+      level = level.to_json
+    end
+    Level.add_user(JSON.load(level), user_hash)
+  end
+
   def abstract_show
     r = []
 
@@ -56,6 +66,10 @@ class Level
 
   def self.prepare_user_id(user_id)
     { id: :menu, x: nil, y: nil, name: :ghost }
+  end
+
+  def self.action(id, user, action_id)
+    Level.find(id).action(user, action_id)
   end
 
   def action(user, action_id)
