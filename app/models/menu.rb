@@ -26,7 +26,11 @@ class Menu
     { width: w * 2 + 1, height: h, floor: :chest_bottom, wall: :chest_wall, items: r }
   end
 
-  def self.prepare_user(user)
+  def self.prepare_user(user)    
+    if !user.is_a? User
+      user = User.find(user)
+    end
+
     u_items = user.inventory.items
     w = 6
     h = 40 / w
@@ -40,10 +44,6 @@ class Menu
       r << { x: w / 2 + w, y: h / 2 - 1, name: user.item.name, id: user.item.id.to_s}
     end
     { items: r}
-  end
-
-  def self.prepare_user_id(user_id)
-    prepare_user(User.find(user_id))
   end
 
   def self.action(hash, user, action_id)

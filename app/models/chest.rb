@@ -56,6 +56,10 @@ class Chest
   end
 
   def self.prepare_user(user)
+    if !user.is_a? User
+      user = User.find(user)
+    end
+
     u_items = user.inventory.items
     w = 6
     h = 40 / w
@@ -67,10 +71,6 @@ class Chest
     end
 
     r
-  end
-
-  def self.prepare_user_id(user_id)
-    prepare_user(User.find(user_id))
   end
 
   def action(user, action_id)

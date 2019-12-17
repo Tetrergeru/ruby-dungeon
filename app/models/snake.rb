@@ -55,7 +55,7 @@ class Snake
         end
       end
 
-      State.change_id(user_hash['id'], Snake, self)
+      State.change(user_hash['id'], Snake, self)
     end
     
     r << {x: @ruby['x'], y: @ruby['y'], name: 'ruby'}
@@ -68,10 +68,10 @@ class Snake
   end
 
   def self.prepare_user(user)
-    prepare_user_id(user.id.to_s)
-  end
+    if user.is_a? User
+      user = user.id.to_s
+    end
 
-  def self.prepare_user_id(user_id)
     r = [{ x: 0, y: 0, name: :back, id: 'back' }]
 
     (1..H-1).each do |i|
@@ -99,7 +99,7 @@ class Snake
         end
       end
     end
-    {r: r, id: user_id}
+    {r: r, id: user}
   end
 
   def self.action(hash, user, action_id)

@@ -61,10 +61,6 @@ class Level
   end
 
   def self.prepare_user(user)
-    Level.prepare_user_id(user.id)
-  end
-
-  def self.prepare_user_id(user_id)
     { id: :menu, x: nil, y: nil, name: :ghost }
   end
 

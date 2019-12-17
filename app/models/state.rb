@@ -37,11 +37,11 @@ class State
   end
 
   def self.change(user, cls, value)
-    update(user.id, State.new(cls, value, cls.prepare_user(user)))
-  end
-
-  def self.change_id(user_id, cls, value)
-    update(user_id, State.new(cls, value, cls.prepare_user_id(user_id)))
+    user_id = user
+    if user_id.is_a? User
+      user_id = user.id.to_s
+    end
+    update(user_id, State.new(cls, value, cls.prepare_user(user)))
   end
 
   def self.update(item_id, value)

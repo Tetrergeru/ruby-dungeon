@@ -46,15 +46,14 @@ class Fight
   end
 
   def self.prepare_user(user)
+    if !user.is_a? User
+      user = User.find(user)
+    end
     if user.item
       {id: user.id.to_s, item: { x: 4, y: 3, name: user.item.name, id: :impact}}
     else
       {id: user.id.to_s, item: nil}
     end
-  end
-
-  def self.prepare_user_id(user_id)
-    prepare_user(User.find(user_id))
   end
 
   def self.action(hash, user, action_id)
