@@ -19,7 +19,7 @@ class ApplicationController < ActionController::Base
       return
     end
     @current_user_id = user_id['$oid']
-    
+
     redirect_to '/auth/login' unless @current_user_id.present?
   end
 end

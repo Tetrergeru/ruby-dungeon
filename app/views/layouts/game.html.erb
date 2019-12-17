@@ -11,7 +11,7 @@
   <article class="user">
     <header>Signed in as</header>
     <section>
-      <%= current_user = User.find(@current_user_id) %>
+      <% current_user = User.find(@current_user_id) %>
       <span><%= current_user.name %> </span>
       <img src=<%= current_user.profile_image %>>
     </section>
