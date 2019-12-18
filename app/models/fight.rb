@@ -25,7 +25,7 @@ class Fight
       else
         @assaulter = 'user'
       end
-      State.change_id(user_hash['id'], Fight, self)
+      State.change(user_hash['id'], Fight, self)
     end
     time_anim = 'time_' + dt.to_s
 
@@ -65,11 +65,13 @@ class Fight
       State.clear(user)
     elsif action_id == 'impact'
       if @assaulter == 'user'
-        @monster_hp -= 1
-        if @monster_hp < 0
-          State.clear(user)
-        else
-          State.change(user, Fight, self)
+        if user.item 
+          @monster_hp -= user.item.damage
+          if @monster_hp < 0
+            State.clear(user)
+          else
+            State.change(user, Fight, self)
+          end
         end
       end
     end
