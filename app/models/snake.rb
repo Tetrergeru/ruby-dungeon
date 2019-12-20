@@ -109,7 +109,7 @@ class Snake
   def action(user, action_id)
     if action_id == 'back'
       State.clear(user)
-    else
+    elsif ['left', 'right' ,'up', 'down'].include? action_id
       @direction = action_id
       State.change(user, Snake, self)
     end

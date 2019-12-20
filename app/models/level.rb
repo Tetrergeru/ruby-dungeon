@@ -42,26 +42,16 @@ class Level
       r << { id: c.id.to_s, x: c.x, y: c.y, name: :door }
     end
 
-    width.times do |i|
-      r << { x: i, y: height, name: :wall }
-    end
-
-    height.times do |i|
-      r << { x: width, y: i, name: :wall }
-    end
-
-    { width: width + 1, height: height + 1, floor: :floor, wall: :wall, items: r }
+    { width: width + 1, height: height + 1, floor: :floor, wall: :wall, items: r, users: nil }
   end
 
   def self.add_user(hash, meta)
-    meta['x'] = hash['width'] - 1
-    meta['y'] = hash['height'] - 1
-    hash['items'] << meta
+    hash['users'] = meta
     hash
   end
 
   def self.prepare_user(user)
-    { id: :menu, x: nil, y: nil, name: :ghost }
+    [{ id: :menu, x: nil, y: nil, name: :ghost }]
   end
 
   def self.action(id, user, action_id)
