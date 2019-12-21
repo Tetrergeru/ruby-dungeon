@@ -68,4 +68,12 @@ class State
   def self.load(key)
     $redis_action.get(key)
   end
+
+  def self.add_to_set(set_name, value)
+    $redis_action.sadd(set_name.to_s, value.to_json)
+  end
+
+  def self.load_set(set_name)
+    $redis_action.smembers(set_name)
+  end
 end

@@ -20,7 +20,7 @@ class Level
       State.update(id, level)
       level = level.to_json
     end
-    Level.add_user(JSON.load(level), user_hash)
+    Level.add_user(JSON.load(level), user_hash, id)
   end
 
   def abstract_show
@@ -45,13 +45,22 @@ class Level
     { width: width + 1, height: height + 1, floor: :floor, wall: :wall, items: r, users: nil }
   end
 
-  def self.add_user(hash, meta)
-    hash['users'] = meta
+  def self.add_user(hash, meta, id)
+    users = State.load_set(id['$oid'].to_s + '_users').map{|x| JSON.load(x)}
+    users.delete_if {|x| x['id'] == meta['user_id']}
+    meta.delete('user_id')
+    users.push(meta)
+    hash['users'] = users
     hash
   end
 
   def self.prepare_user(user)
-    [{ id: :menu, x: nil, y: nil, name: :ghost }]
+    if !user.is_a? User
+      user = User.find(user)
+    end
+
+    State.add_to_set(user.location.to_s + '_users', { id: user.id.to_s, name: :ghost })
+    { id: :menu, name: :ghost , user_id: user.id.to_s}
   end
 
   def self.action(id, user, action_id)
