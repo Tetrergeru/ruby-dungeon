@@ -70,19 +70,34 @@ class Menu
     Menu.from_hash(hash).action(user, action_id)
   end
 
+  def upgrade_stat(items, stat)
+    count = 0
+    items.each { | x | if x.name == 'ruby' then count += 1 end }
+    if count > stat
+      stat = (stat + 1) % 5
+      stat.times do
+        item = nil
+        items.each { | x | if x.name == 'ruby' then item = x end }
+        items.delete(item)
+        puts(count.to_s * 100)
+      end
+    end
+    stat
+  end
+
   def action(user, action_id)
     items = user.inventory.items
 
     if action_id == 'back'
       State.clear(user)
     elsif action_id == 'poltergeisting'
-      user.poltergeisting = (user.poltergeisting + 1) % 5
+      user.poltergeisting = upgrade_stat(items, user.poltergeisting)
       State.change(user, Menu, self)
     elsif action_id == 'transparency'
-      user.transparency = (user.transparency + 1) % 5
+      user.transparency = upgrade_stat(items, user.transparency)
       State.change(user, Menu, self)
     elsif action_id == 'bond'
-      user.bond = (user.bond + 1) % 5
+      user.bond = upgrade_stat(items, user.bond)
       State.change(user, Menu, self)
     elsif user.item && user.item.id.to_s == action_id
       items << user.item.clone
