@@ -48,7 +48,7 @@ class Menu
       user.poltergeisting = 0
     end
     r << { x: w + 4, y: 1, name: 'points_' + user.poltergeisting.to_s}
-    r << { x: w + 3, y: 1, name: 'poltergeist_0', id: 'poltergeist'}
+    r << { x: w + 3, y: 1, name: 'poltergeist_0', id: 'poltergeisting'}
 
     unless user.transparency
       user.transparency = 0
@@ -75,6 +75,15 @@ class Menu
 
     if action_id == 'back'
       State.clear(user)
+    elsif action_id == 'poltergeisting'
+      user.poltergeisting = (user.poltergeisting + 1) % 5
+      State.change(user, Menu, self)
+    elsif action_id == 'transparency'
+      user.transparency = (user.transparency + 1) % 5
+      State.change(user, Menu, self)
+    elsif action_id == 'bond'
+      user.bond = (user.bond + 1) % 5
+      State.change(user, Menu, self)
     elsif user.item && user.item.id.to_s == action_id
       items << user.item.clone
       user.item = nil
