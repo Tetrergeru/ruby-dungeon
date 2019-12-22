@@ -1,0 +1,142 @@
+{
+  "chest": {
+    "file": "x32/chest_4.png"
+  },
+
+  "floor": {
+    "file": "x32/floor_4.png"
+  },
+
+  "monster": {
+    "file": "x32/monster_2.png"
+  },
+
+  "revolver": {
+    "file": "revolver.png"
+  },
+
+  "ruby": {
+    "file": "ruby.png"
+  },
+
+  "sword": {
+    "file": "sword.png"
+  },
+
+  "wall": {
+    "file": "x32/wall_16.png"
+  },
+
+  "door": {
+    "file": "x32/door_2.png"
+  },
+
+  "back": {
+    "file": "back.png"
+  },
+
+  "chest_bottom": {
+    "file": "chest_bottom.png"
+  },
+
+  "chest_separator": {
+    "file": "chest_separator.png"
+  },
+
+  "chest_up_separator":{
+    "file": "chest_up_separator.png"
+  },
+
+  "chest_wall":{
+    "file": "chest_wall.png"
+  },
+
+  "hp_0":{
+    "file": "hp/hp_0.png"
+  },
+
+  "hp_1":{
+    "file": "hp/hp_1.png"
+  },
+
+  "hp_2":{
+    "file": "hp/hp_2.png"
+  },
+
+  "time_0":{
+    "file": "time/time_0.png"
+  },
+
+  "time_1":{
+    "file": "time/time_1.png"
+  },
+
+  "time_2":{
+    "file": "time/time_2.png"
+  },
+
+  "time_3":{
+    "file": "time/time_3.png"
+  },
+
+  "aim":{
+    "file": "aim.png"
+  },
+
+  "ghost":{
+    "file": "ghost.png"
+  },
+
+  "left_arrow":{
+    "file": "arrow/left.png"
+  },
+
+  "right_arrow":{
+    "file": "arrow/right.png"
+  },
+
+  "up_arrow":{
+    "file": "arrow/up.png"
+  },
+
+  "down_arrow":{
+    "file": "arrow/down.png"
+  },
+
+  "points_0":{
+    "file": "points/points_0.png"
+  },
+
+  "points_1":{
+    "file": "points/points_1.png"
+  },
+
+  "points_2":{
+    "file": "points/points_2.png"
+  },
+
+  "points_3":{
+    "file": "points/points_3.png"
+  },
+
+  "points_4":{
+    "file": "points/points_4.png"
+  },
+
+  "poltergeist_0":{
+    "file": "poltergeist_0.png"
+  },
+
+  "poltergeist_1":{
+    "file": "poltergeist_1.png"
+  },
+
+  "transparency_0":{
+    "file": "transparency_0.png"
+  },
+
+  "bond_0":{
+    "file": "bond_0.png"
+  }
+
+}
