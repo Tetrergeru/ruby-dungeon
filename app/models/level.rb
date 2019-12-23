@@ -76,7 +76,7 @@ class Level
     elsif chests.any? { |i| i.id.to_s == action_id }
       State.change(user, Chest, action_id)
     elsif monsters.any? { |i| i.id.to_s == action_id }
-      State.change(user, Fight, Fight.new)
+      State.change(user, Fight, Fight.new(user))
     elsif doors.any? { |i| i.id.to_s == action_id }
       doors.find(action_id).action(user, action_id)
     end

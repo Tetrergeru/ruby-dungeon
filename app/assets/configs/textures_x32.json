@@ -63,6 +63,10 @@
     "file": "hp/hp_2.png"
   },
 
+  "hp_3":{
+    "file": "hp/hp_2.png"
+  },
+
   "time_0":{
     "file": "time/time_0.png"
   },
