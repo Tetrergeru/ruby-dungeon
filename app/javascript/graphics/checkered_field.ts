@@ -31,12 +31,57 @@ class FieldSizes {
     }
 }
 
+class FieldForMouse {
+    private readonly field: Array<Array<any>>;
+
+    constructor(private size: FieldSizes) {
+        this.field = new Array<Array<any>>(size.inCells.width);
+        for (let i = 0; i < size.inCells.width; i++) {
+            this.field[i] = new Array<any>();
+        }
+    }
+
+    addCell(pos: Coordinately, size: Sizeable) {
+        if (!this.field[pos.x]) {
+            return;
+        }
+        this.field[pos.x].push(
+            {
+                size: size,
+                y: pos.y,
+                start: (pos.y + 1) * this.size.cell.height - size.height,
+                end: (pos.y + 1) * this.size.cell.height
+            });
+        this.field[pos.x].sort((a: any, b: any) => {
+            return a.start - b.start
+        });
+    }
+
+    getCell(real: Sizeable): Coordinately {
+        const x = (real.width / this.size.scale / this.size.cell.width) | 0;
+        let result = -1;
+        const line = this.field[x];
+        const y = real.height / this.size.scale;
+        if (line)
+            line.forEach(
+                (value) => {
+                    if (value.start < y && y < value.end)
+                        result = value.y
+                });
+        return {
+            x: x,
+            y: result == -1 ? (y / this.size.cell.height) | 0 : result
+        };
+    }
+}
+
 export class CheckeredField {
     public sizes: FieldSizes;
     private canvases = new Map<Layer, HTMLCanvasElement>();
     private contexts = new Map<Layer, CanvasRenderingContext2D>();
     private clickListeners = new Array<ClickEventListener>();
     private _currentCell = {x: 0, y: 0};
+    private sprites: FieldForMouse;
 
     constructor(
         private mainCanvas: HTMLCanvasElement,
@@ -44,10 +89,14 @@ export class CheckeredField {
     ) {
         this.canvases.set(Layer.Main, mainCanvas);
         this.canvases.set(Layer.Background, backgroundCanvas);
-        this.sizes = FieldSizes.CreateByElement(must(this.canvases.get(Layer.Main)), {width: 1, height: 1}, {
-            width: 16,
-            height: 16
-        });
+        this.sizes = FieldSizes.CreateByElement(
+            must(this.canvases.get(Layer.Main)),
+            {width: 1, height: 1},
+            {
+                width: 16,
+                height: 16
+            });
+        this.sprites = new FieldForMouse(this.sizes);
         mainCanvas.addEventListener('mousemove', (event) => {
             this._currentCell = this.getCurrentCell(event);
         });
@@ -90,6 +139,7 @@ export class CheckeredField {
 
     resize(field: Sizeable, cell: Sizeable) {
         this.sizes = FieldSizes.CreateByElement(must(this.canvases.get(Layer.Main)), field, cell);
+        this.sprites = new FieldForMouse(this.sizes);
         this.canvases.forEach(
             (canvas, layer) => {
                 let context = CanvasHelper.getContext(CanvasHelper.setSize(canvas, this.sizes.inRealPX));
@@ -109,6 +159,7 @@ export class CheckeredField {
             (currentCell.y + 1) * this.sizes.cell.height - size.height);
         draw(context);
         context.restore();
+        this.sprites.addCell(currentCell, size);
     }
 
     fillBackground(sprite: ImageBitmap) {
@@ -135,10 +186,11 @@ export class CheckeredField {
             Sizeable.Make(
                 event.offsetX,
                 event.offsetY));
-        return {
+        /*return {
             x: (real.width / this.sizes.scale / this.sizes.cell.width) | 0,
             y: (real.height / this.sizes.scale / this.sizes.cell.height) | 0
-        };
+        };*/
+        return this.sprites.getCell(real);
     }
 }
 
