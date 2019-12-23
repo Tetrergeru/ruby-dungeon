@@ -13,7 +13,7 @@ class Menu
 
     h.times do |j|
       (w..(2 * w)).each do |i|
-        if !(i == w / 2 + w && j == h / 2 - 1)
+        unless (i == w + 1 && j == 1) || ((i == w + 3 || i == w + 4) && (j == 1 || j == 2 || j == 3))
           r << { x: i, y: j, name: 'chest_wall' }
         end
       end
@@ -41,8 +41,28 @@ class Menu
       r << { x: i % w, y: i / w + 1, name: u_items[i].name, id: u_items[i].id.to_s }
     end
     if user.item
-      r << { x: w / 2 + w, y: h / 2 - 1, name: user.item.name, id: user.item.id.to_s}
+      r << { x: w + 1, y: 1, name: user.item.name, id: user.item.id.to_s}
     end
+
+    unless user.poltergeisting
+      user.poltergeisting = 0
+    end
+    r << { x: w + 4, y: 1, name: 'points_' + user.poltergeisting.to_s}
+    r << { x: w + 3, y: 1, name: 'poltergeist_0', id: 'poltergeisting'}
+
+    unless user.transparency
+      user.transparency = 0
+    end
+    r << { x: w + 4, y: 2, name: 'points_' + user.transparency.to_s}
+    r << { x: w + 3, y: 2, name: 'transparency_0', id: 'transparency'}
+
+    unless user.bond
+      user.bond = 0
+    end
+    r << { x: w + 4, y: 3, name: 'points_' + user.bond.to_s}
+    r << { x: w + 3, y: 3, name: 'bond_0', id: 'bond'}
+
+
     { items: r}
   end
 
@@ -50,11 +70,35 @@ class Menu
     Menu.from_hash(hash).action(user, action_id)
   end
 
+  def upgrade_stat(items, stat)
+    count = 0
+    items.each { | x | if x.name == 'ruby' then count += 1 end }
+    if count > stat
+      stat = (stat + 1) % 5
+      stat.times do
+        item = nil
+        items.each { | x | if x.name == 'ruby' then item = x end }
+        items.delete(item)
+        puts(count.to_s * 100)
+      end
+    end
+    stat
+  end
+
   def action(user, action_id)
     items = user.inventory.items
 
     if action_id == 'back'
       State.clear(user)
+    elsif action_id == 'poltergeisting'
+      user.poltergeisting = upgrade_stat(items, user.poltergeisting)
+      State.change(user, Menu, self)
+    elsif action_id == 'transparency'
+      user.transparency = upgrade_stat(items, user.transparency)
+      State.change(user, Menu, self)
+    elsif action_id == 'bond'
+      user.bond = upgrade_stat(items, user.bond)
+      State.change(user, Menu, self)
     elsif user.item && user.item.id.to_s == action_id
       items << user.item.clone
       user.item = nil

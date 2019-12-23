@@ -1,9 +1,14 @@
 
 class Fight
-  def initialize 
+  def initialize(user)
+    return unless user
+
     @time = Time.now.to_i
     @assaulter = 'user'
-    @user_hp = 2
+    unless user.bond
+      user.bond = 0
+    end
+    @user_hp = user.bond
     @monster_hp = 2
   end
  
@@ -37,7 +42,8 @@ class Fight
     r << { x: 0, y: 0, name: :back, id: :back }
     
     r << { x: 1, y: 1, name: hp(@monster_hp) }
-    r << { x: 5, y: 1, name: hp(@user_hp) }
+    r << { x: 5, y: 1, name: hp(@user_hp > 2 ? 2 : @user_hp) }
+    r << { x: 6, y: 1, name: hp(@user_hp < 2 ? 0 : @user_hp - 2) }
     if @assaulter == 'user' && user_hash['item']
       r << user_hash['item']
     end
@@ -65,7 +71,8 @@ class Fight
       State.clear(user)
     elsif action_id == 'impact'
       if @assaulter == 'user'
-        if user.item 
+        user.poltergeisting = 0 unless user.poltergeisting
+        if user.item && (0.5 + user.poltergeisting / 10 > rand)
           @monster_hp -= user.item.damage
           if @monster_hp < 0
             State.clear(user)
@@ -78,7 +85,7 @@ class Fight
   end
 
   def self.from_hash hash
-    f = Fight.new
+    f = Fight.new(nil)
     hash.each do |var, val|
         f.instance_variable_set ('@' + var), val
     end

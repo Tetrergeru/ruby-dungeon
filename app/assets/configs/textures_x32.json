@@ -1,14 +1,14 @@
 {
   "chest": {
-    "file": "chest.png"
+    "file": "x32/chest_4.png"
   },
 
   "floor": {
-    "file": "floor.png"
+    "file": "x32/floor_4.png"
   },
 
   "monster": {
-    "file": "monster2.png"
+    "file": "x32/monster_2.png"
   },
 
   "revolver": {
@@ -24,11 +24,11 @@
   },
 
   "wall": {
-    "file": "wall.png"
+    "file": "x32/wall_16.png"
   },
 
   "door": {
-    "file": "door.png"
+    "file": "x32/door_2.png"
   },
 
   "back": {

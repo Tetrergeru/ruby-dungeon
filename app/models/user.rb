@@ -19,6 +19,11 @@ class User
   field :secret, type: String
   field :profile_image, type: String
 
+  field :poltergeisting, type: Integer
+  field :transparency, type: Integer
+  field :bond, type: Integer
+
+
   def self.find_or_create_from_auth_hash(auth_hash)
     user = where(provider: auth_hash.provider, uid: auth_hash.uid).first_or_create
     user.update(
@@ -29,6 +34,11 @@ class User
     )
     user.inventory = Inventory.new(items: []) unless user.inventory
     user.location = Level.all[0].id unless user.location
+
+    user.poltergeisting = 0 unless user.poltergeisting
+    user.transparency = 0 unless user.transparency
+    user.bond = 0 unless user.bond
+
     user.save
     user
   end

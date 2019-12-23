@@ -6,7 +6,7 @@ interface Texture {
 }
 
 export function downloadImages() {
-    return fetchJSON(`/assets/textures.json`)
+    return fetchJSON(`/assets/textures_x32.json`)
         .then(json => {
             const textures = json as Array<Texture>;
             const promises = new Array<Promise<ImageBitmapSource>>();
