@@ -71,7 +71,8 @@ class Fight
       State.clear(user)
     elsif action_id == 'impact'
       if @assaulter == 'user'
-        if user.item 
+        user.poltergeisting = 0 unless user.poltergeisting
+        if user.item && (0.5 + user.poltergeisting / 10 > rand)
           @monster_hp -= user.item.damage
           if @monster_hp < 0
             State.clear(user)
